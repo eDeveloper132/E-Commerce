@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Script from "next/script";
+import Image from "next/image";
+import Logo from "../../public/Logo.jpg"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +27,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
+      <head>
+        <Script src="https://kit.fontawesome.com/1f48a0d62b.js" crossOrigin="anonymous" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <nav className="flex justify-evenly h-[50px] items-center bg-cyan-700">
+          <div className="flex gap-3 items-center">
+            <Image src={Logo} alt="Logo" width={50} height={50} className="h-fit"></Image>
+            <h1 className="text-3xl font-bold">ShopEasy</h1>
+          </div>
+          <ul className="flex gap-10 items-center">
+            <li>Home</li>
+            <li>Tracking</li>
+          </ul>
+          <div className="flex gap-6 items-center">
+            <i className="fa-solid fa-cart-shopping"></i>
+              <SignedOut>
+              <SignInButton />
+              </SignedOut>
+              <SignedIn>
+              <UserButton />
+              </SignedIn>
+          </div>
+          </nav>
         {children}
       </body>
     </html>
+    </ClerkProvider>
   );
 }

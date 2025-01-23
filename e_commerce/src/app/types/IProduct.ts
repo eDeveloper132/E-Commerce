@@ -1,3 +1,4 @@
+import { StaticImageData } from "next/image";
 
 export default interface IProduct {
     _id?: string;
@@ -8,14 +9,5 @@ export default interface IProduct {
     category?: string;
     tag?: string;
     rating?: number;
-    image: {
-        product: [
-            {
-                asset: {
-                    _ref: string;
-                };
-            }
-        ]
-
-    };
+    image: StaticImageData
 }

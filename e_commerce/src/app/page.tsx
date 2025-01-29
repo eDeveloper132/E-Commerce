@@ -1,13 +1,14 @@
-import { client } from '../sanity/lib/client'
 import Products_Card from './components/Products_Card';
 import IProduct from './types/IProduct';
 import { urlFor } from '../sanity/lib/image'; // Assuming you have this utility function to get image URL
-
+import { getProducts } from './api/products/products';
+// import { auth, currentUser } from '@clerk/nextjs/server';
 export default async function Home() {
-  // Fetching products from Sanity
-  const Data = await client.fetch('*[_type == "product"]');
-  // console.log(Data);
-
+  // const Auth = await auth()
+  // console.log(Auth)
+  // const user = await currentUser();
+  // console.log(user)
+  const Data = await getProducts();
   return (
     <main className='py-10 bg-white'>
       <div className='flex justify-center'>
@@ -21,7 +22,7 @@ export default async function Home() {
           ) {
             // Resolving the image URL using the `urlFor` function (which you'd need to define)
             const imageUrl = product.image ? urlFor(product.image).url() : '';
-
+            // console.log(imageUrl)
             return (
               <div key={product._id} className='w-[200px] h-[300px]'>
                 <Products_Card

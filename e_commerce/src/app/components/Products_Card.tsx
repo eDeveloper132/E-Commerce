@@ -17,14 +17,14 @@ export default function Products_Card({
     category?: string;
     tag?: string;
     rating?: number;
-    image?: string; // Changed to string to handle image URLs
+    image: string; // Changed to string to handle image URLs
 }) {
     return (
         <div className="h-[310px] w-[200px] rounded-lg overflow-hidden shadow-xl bg-white transform transition duration-300 hover:scale-105 hover:shadow-2xl relative group">
             {/* Product Image */}
             <div>
                 <Image 
-                    src={image ? image : 'https://678a7733dd587da7ac2a4878.mockapi.io/products/Products/default-image.jpg'} 
+                    src={image} 
                     alt={name} 
                     width={200} 
                     height={200}

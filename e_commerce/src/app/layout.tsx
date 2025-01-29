@@ -38,14 +38,14 @@ export default function RootLayout({
         <nav className="flex justify-evenly h-[50px] items-center bg-cyan-700">
           <div className="flex gap-3 items-center">
             <Image src={Logo} alt="Logo" width={50} height={50} className="h-fit"></Image>
-            <h1 className="text-3xl font-bold">ShopEasy</h1>
+            <h1 className="text-3xl font-bold text-white">ShopEasy</h1>
           </div>
           <ul className="flex gap-10 items-center">
-            <li>Home</li>
-            <li>Tracking</li>
+            <li className="text-white">Home</li>
+            <li className="text-white">Tracking</li>
           </ul>
-          <div className="flex gap-6 items-center">
-            <i className="fa-solid fa-cart-shopping"></i>
+          <div className="flex gap-6 items-center text-white">
+            <i className="fa-solid fa-cart-shopping text-white"></i>
               <SignedOut>
               <SignInButton />
               </SignedOut>

@@ -67,7 +67,7 @@ export default function RootLayout({
         <div className="flex justify-center px-4">
             <div className="flex my-4 h-[44px] gap-20 flex-wrap items-center">
                 <div className="flex justify-between items-center w-full md:w-auto gap-20">
-                    <div className="font-[Josefin Sans] font-bold text-4xl text-[#0D0E43] cursor-pointer"><Link href={"/"}></Link>ShopEasy</div>
+                    <div className="font-[Josefin Sans] font-bold text-4xl text-[#0D0E43] cursor-pointer"><Link href={"/"}>ShopEasy</Link></div>
                     <ul className="flex gap-4 font-[Lato] font-medium flex-wrap">
                     <li className="relative flex items-center gap-2 text-[#FB2E86] cursor-pointer group">
     <span className="text-lg font-medium">Home</span>

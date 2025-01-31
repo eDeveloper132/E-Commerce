@@ -71,13 +71,7 @@ export default function MainHome(){
     </div>
 
     <div className="bg-[#F2F0FF] flex justify-center h-20">
-        <div className="w-[66px]">
-            <ul className="flex gap-3">
-                <li className="w-[10px] h-[9.89px] rotate-45 bg-[#FB2E86] cursor-pointer"></li>
-                <li className="w-[10px] h-[9.89px] rotate-45 border-[1px] border-[#FB2E86] cursor-pointer"></li>
-                <li className="w-[10px] h-[9.89px] rotate-45 border-[1px] border-[#FB2E86] cursor-pointer"></li>
-            </ul>
-        </div>
+
     </div>
 
     <div className="flex justify-center mt-16 md:mt-32">

@@ -50,17 +50,19 @@ export default function RootLayout({
                 <ul className="flex gap-4 text-white flex-wrap">
                     <li className="flex gap-2 my-auto cursor-pointer">English <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
                     <li className="flex gap-2 my-auto cursor-pointer">USD <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
+                    <li className="flex gap-2 my-auto cursor-pointer">Wishlist <i className="fa-regular fa-heart my-auto cursor-pointer"></i></li>
+                </ul>
+                <Link href={'/Shopping_curt_page'}>
+                <i className="fa-solid fa-cart-shopping my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
+                </Link>
+                <div>
                     <SignedOut>
                     <SignInButton />
                     </SignedOut>
                     <SignedIn>
                     <UserButton />
                     </SignedIn>
-                    <li className="flex gap-2 my-auto cursor-pointer">Wishlist <i className="fa-regular fa-heart my-auto cursor-pointer"></i></li>
-                </ul>
-                <Link href={'/Shopping_curt_page'}>
-                <i className="fa-solid fa-cart-shopping my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
-                </Link>
+                </div>
             </div>
         </div>
 

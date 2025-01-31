@@ -1,15 +1,15 @@
 import lamb from "../../../public/lamb.png";
 import sofa from "../../../public/sofa.png";
 import Image from "next/image";
-import Featured_Card from "../components/Featured_Card";
+// import Featured_Card from "../components/Featured_Card";
 import Latestproducts_Card from "../components/Latestproducts_Card";
 import Top_Catagories_Card from "../components/Top_Catagories_Card";
 import Trending_Products from "../components/Trending_Products";
 import Blog_Card from "../components/Blog_Card";
-import kursi_1 from "../../../public/kursi_1.png";
-import kursi_2 from "../../../public/kursi_2.png";
-import kursi_3 from "../../../public/kursi_3.png";
-import kursi_4 from "../../../public/kursi_4.png";
+// import kursi_1 from "../../../public/kursi_1.png";
+// import kursi_2 from "../../../public/kursi_2.png";
+// import kursi_3 from "../../../public/kursi_3.png";
+// import kursi_4 from "../../../public/kursi_4.png";
 import kursi_5 from "../../../public/kursi_5.png";
 import kursi_6 from "../../../public/kursi_6.png";
 import kursi_7 from "../../../public/kursi_7.png";
@@ -41,7 +41,12 @@ import background_image2 from "../../../public/background_image2.jpeg";
 import background_image3 from "../../../public/background_image3.jpeg";
 import pen_nib from "../../../public/pen_nib.png";
 import calendar_iop from "../../../public/calendar_iop.png";
-export default function MainHome(){
+import { getProducts } from "../api/products/products";
+// import IProduct from "../types/IProduct";
+// import { urlFor } from "@/sanity/lib/image";
+import ProductGrid from "../components/Products_Grid";
+export default async function MainHome(){
+  const productsData = await getProducts();
     return(
 <main className="w-full bg-white">
     <div className="bg-[#F2F0FF] flex flex-wrap">
@@ -54,7 +59,7 @@ export default function MainHome(){
       Best Furniture For Your Castle....
     </p>
     <h1 className="font-[Josefin Sans] text-[32px] sm:text-[42px] md:text-[48px] lg:text-[53px] font-bold leading-[42px] md:leading-[60px] lg:leading-[82px] tracking-[0.5%] pb-3 text-black">
-      New Furniture Collection Trends in 2020
+      New Furniture Collection Trends in {new Date().getFullYear()}
     </h1>
     <p className="font-[Lato] font-bold text-[14px] md:text-[16px] leading-6 md:leading-7 text-[#8A8FB9] pb-7">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Magna in est adipiscing in phasellus non in justo.
@@ -81,23 +86,16 @@ export default function MainHome(){
 </div>
 
 
-    <div className="flex justify-center my-32">
-        <div className="grid md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-5">
-            <Featured_Card image={kursi_1} title="Cantilever chair" code="Y523201" price={42.00} />
-            <Featured_Card image={kursi_2} title="Cantilever chair" code="Y523201" price={42.00} />
-            <Featured_Card image={kursi_3} title="Cantilever chair" code="Y523201" price={42.00} />
-            <Featured_Card image={kursi_4} title="Cantilever chair" code="Y523201" price={42.00} />
-        </div>
-    </div>
+      <ProductGrid productsData={productsData} />
 
-    <div className="flex justify-center my-14">
+    {/* <div className="flex justify-center my-14">
         <ul className="flex gap-3">
         <li className="w-6 h-1 rounded-[10px] bg-[#FB2E86] cursor-pointer"></li>
         <li className="w-4 h-1 rounded-[10px] bg-[#FEBAD7] cursor-pointer"></li>
         <li className="w-4 h-1 rounded-[10px] bg-[#FEBAD7] cursor-pointer"></li>
         <li className="w-4 h-1 rounded-[10px] bg-[#FEBAD7] cursor-pointer"></li>
         </ul>
-    </div>
+    </div> */}
 
     <div className="flex justify-center">
   <h1 className="font-[Josefin Sans] text-[28px] md:text-[42px] leading-[36px] md:leading-[50px] font-bold text-[#1A0B5B]">
@@ -136,7 +134,7 @@ export default function MainHome(){
 
     <div className="flex justify-center my-16 md:my-32">
   <h1 className="font-[Josefin Sans] text-[28px] md:text-[42px] leading-[36px] md:leading-[49px] font-bold text-[#151875]">
-    What Shopex Offer!
+    What ShopEasy Offer!
   </h1>
 </div>
 
@@ -402,7 +400,7 @@ export default function MainHome(){
 <div className="flex justify-center px-4 md:px-8 pb-28">
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 max-w-[1200px]">
     <Blog_Card 
-      title="Top Essential Trends in 2021" 
+      title="Top Essential Trends in" 
       image={background_image1} 
       image_1={pen_nib} 
       image_2={calendar_iop} 
@@ -411,7 +409,7 @@ export default function MainHome(){
       date="21 August, 2020" 
     />
     <Blog_Card 
-      title="Top Essential Trends in 2021" 
+      title="Top Essential Trends in" 
       image={background_image2} 
       image_1={pen_nib} 
       image_2={calendar_iop} 
@@ -420,7 +418,7 @@ export default function MainHome(){
       date="21 August, 2020" 
     />
     <Blog_Card 
-      title="Top Essential Trends in 2021" 
+      title="Top Essential Trends in" 
       image={background_image3} 
       image_1={pen_nib} 
       image_2={calendar_iop} 

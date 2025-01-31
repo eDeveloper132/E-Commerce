@@ -1,29 +1,31 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-// ✅ Define protected routes that require authentication
-// const protectedRoutes = ["/dashboard", "/settings"];
+export default clerkMiddleware(async (auth, req) => {
+  // Public routes that don't require authentication
+  const publicRoutes = ["/studio", "/api(.*)"];
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
-  // const { userId } = await auth(); // Await auth to get the userId
-  const pathname = req.nextUrl.pathname;
+  // Check if the current route is public
+  if (publicRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
+    return NextResponse.next(); // Allow access to public routes
+  }
 
-  // // ✅ Redirect unauthenticated users trying to access protected routes
-  // if (!userId) {
-  //   const signInUrl = new URL("/sign-in", req.url); // Redirect to sign-in page
-  //   return NextResponse.redirect(signInUrl); // Redirect unauthenticated users to sign-in
-  // }
+  // Wait for the auth object to resolve
+  const resolvedAuth = await auth();
 
-  // ✅ Log requests (useful for debugging)
-  const clientIp = req.headers.get("x-forwarded-for") || "unknown"; // Get IP from headers
-  console.log(`[MIDDLEWARE] Request from ${clientIp} to ${pathname}`);
+  // If no session exists (user is not authenticated), Clerk should automatically redirect
+  if (!resolvedAuth.sessionId) {
+    console.log(NextResponse)
+    // No need to redirect to /sign-in manually; Clerk will handle that for you.
+    return NextResponse.next(); // Let Clerk redirect unauthenticated users to its default sign-in page
+  }
 
+  // If the user is authenticated, allow access
   return NextResponse.next();
 });
-
-// ✅ Exclude public files, assets, and "/studio"
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|studio).*)", // Exclude "/studio" & public files
-  ],
-};
+    // Match all paths except for public routes and internal Next.js files
+    // Allow paths that don't start with /studio, /_next, or /favicon.ico
+"/((?!_next/static|_next/image|favicon.ico|studio).*)"  ]
+  };

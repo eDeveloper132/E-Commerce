@@ -61,7 +61,7 @@ export default function Blog_Card({
 
       <div className="my-2 px-4 sm:px-6 flex flex-col gap-3">
         <h1 className="font-[Josefin Sans] font-semibold text-[18px] sm:text-[20px] leading-[24px] group-hover:text-[#FB2E86] text-[#151875]">
-          {title}
+          {title} {new Date().getFullYear()}
         </h1>
         <p className="font-[Lato] font-normal text-[14px] sm:text-[16px] leading-[24px] text-[#72718F]">
           {paragraph}

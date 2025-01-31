@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Script from "next/script";
 import Link from "next/link";
+import RealTimeDate from "./components/RealTimeDate";
+import ClientWrapper from "./components/clientlayout";
+// import { useCurrentPath } from "./types/usePathname";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +28,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    // const pathname = useCurrentPath(); // Get the current pathname
+    // const isStudioRoute = pathname === "/studio";  
   return (
-    <ClerkProvider>
     <html lang="en">
       <head>
         <Script src="https://kit.fontawesome.com/1f48a0d62b.js" crossOrigin="anonymous" strategy="afterInteractive"/>
@@ -34,200 +38,194 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-    <nav className="w-full bg-white text-black">
-        <div className="flex bg-[#7E33E0] items-center font-[Josefin Sans] font-bold h-11 justify-evenly flex-wrap px-4">
-            <div className="flex gap-4 justify-between w-full md:w-1/2 lg:w-1/4 items-center">
-                <div className="flex gap-3">
-                    <i className="fa-regular fa-envelope my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
-                    <span className="text-white my-auto cursor-pointer">mhhasanul@gmail.com</span>
+        <ClientWrapper>
+            <nav className="w-full bg-white text-black">
+                <div className="flex bg-[#7E33E0] items-center font-[Josefin Sans] font-bold h-11 justify-evenly flex-wrap px-4">
+                    <div className="flex gap-4 justify-between w-full md:w-1/2 lg:w-1/4 items-center">
+                        <div className="flex gap-3">
+                            <i className="fa-regular fa-envelope my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
+                            <span className="text-white my-auto cursor-pointer">mhhasanul@gmail.com</span>
+                        </div>
+                        <div className="flex gap-3">
+                            <i className="fa fa-phone my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
+                            <span className="text-white my-auto cursor-pointer">(12345)67890</span>
+                        </div>
+                    </div>
+                    <div className="flex gap-4 w-full md:w-1/2 lg:w-1/4 mt-2 md:mt-0 items-center">
+                        <ul className="flex gap-4 text-white flex-wrap items-center">
+                            <li className="flex gap-2 my-auto cursor-pointer">English <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
+                            <li className="flex gap-2 my-auto cursor-pointer">USD <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
+                            <li className="flex gap-2 my-auto cursor-pointer">Wishlist <i className="fa-regular fa-heart my-auto cursor-pointer"></i></li>
+                        </ul>
+                        <Link href={'/Shopping_curt_page'}>
+                        <i className="fa-solid fa-cart-shopping my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
+                        </Link>
+                        <div className="mt-1 text-white">
+                            <SignedOut>
+                            <SignInButton />
+                            </SignedOut>
+                            <SignedIn>
+                            <UserButton />
+                            </SignedIn>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex gap-3">
-                    <i className="fa fa-phone my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
-                    <span className="text-white my-auto cursor-pointer">(12345)67890</span>
-                </div>
-            </div>
-            <div className="flex gap-4 w-full md:w-1/2 lg:w-1/4 mt-2 md:mt-0 items-center">
-                <ul className="flex gap-4 text-white flex-wrap items-center">
-                    <li className="flex gap-2 my-auto cursor-pointer">English <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
-                    <li className="flex gap-2 my-auto cursor-pointer">USD <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
-                    <li className="flex gap-2 my-auto cursor-pointer">Wishlist <i className="fa-regular fa-heart my-auto cursor-pointer"></i></li>
-                </ul>
-                <Link href={'/Shopping_curt_page'}>
-                <i className="fa-solid fa-cart-shopping my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
-                </Link>
-                <div className="mt-1">
-                    <SignedOut>
-                    <SignInButton />
-                    </SignedOut>
-                    <SignedIn>
-                    <UserButton />
-                    </SignedIn>
-                </div>
-            </div>
-        </div>
-
-        <div className="flex justify-center px-4">
-            <div className="flex my-4 h-[44px] gap-20 flex-wrap items-center">
-                <div className="flex justify-between items-center w-full md:w-auto gap-20">
-                    <div className="font-[Josefin Sans] font-bold text-4xl text-[#0D0E43] cursor-pointer"><Link href={"/"}>ShopEasy</Link></div>
-                    <ul className="flex gap-4 font-[Lato] font-medium flex-wrap">
-                    <li className="relative flex items-center gap-2 text-[#FB2E86] cursor-pointer group">
-    <span className="text-lg font-medium">Home</span>
-    <i className="fa-solid fa-caret-down text-sm"></i>
-    {/* Dropdown */}
-    <ul className="absolute hidden group-hover:block top-full left-0 bg-white shadow-lg text-gray-800 rounded-lg w-48">
-        <li className="relative px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300 rounded-t-lg group">
-            Pages
-            <i className="fa-solid fa-caret-right ml-2 text-sm"></i>
-            {/* Sub-dropdown */}
-            <ul className="absolute hidden group-hover:block top-0 left-full bg-white shadow-lg text-gray-800 rounded-lg ml-1 w-48">
-                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                    <Link href="/Shop_grid_page">Shop Grid Default</Link>
+        
+                <div className="flex justify-center px-4">
+                    <div className="flex my-4 h-[44px] gap-20 flex-wrap items-center">
+                        <div className="flex justify-between items-center w-full md:w-auto gap-20">
+                            <div className="font-[Josefin Sans] font-bold text-4xl text-[#0D0E43] cursor-pointer"><Link href={"/"}>ShopEasy</Link></div>
+                            <ul className="flex gap-4 font-[Lato] font-medium flex-wrap">
+                            <li className="relative flex items-center gap-2 text-[#FB2E86] cursor-pointer group">
+            <span className="text-lg font-medium">Home</span>
+            <i className="fa-solid fa-caret-down text-sm"></i>
+            {/* Dropdown */}
+            <ul className="absolute hidden group-hover:block top-full left-0 bg-white shadow-lg text-gray-800 rounded-lg w-48">
+                <li className="relative px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300 rounded-t-lg group">
+                    Pages
+                    <i className="fa-solid fa-caret-right ml-2 text-sm"></i>
+                    {/* Sub-dropdown */}
+                    <ul className="absolute hidden group-hover:block top-0 left-full bg-white shadow-lg text-gray-800 rounded-lg ml-1 w-48">
+                        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                            <Link href="/Shop_grid_page">Shop Grid Default</Link>
+                        </li>
+                        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                            <Link href={"/Shop_list_page"}>Shop List</Link>
+                        </li>
+                        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                            <Link href={"/Shop_left_page"}>Shop Left</Link>
+                        </li>
+                        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                            <Link href={"/Product_details_page"}>Product Details</Link>
+                        </li>
+                        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                            <Link href={"/About_us_page"}>About Us</Link>
+                        </li>
+                    </ul>
                 </li>
-                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                    <Link href={"/Shop_list_page"}>Shop List</Link>
+                {/* <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                    Option 2
                 </li>
-                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                    <Link href={"/Shop_left_page"}>Shop Left</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                    <Link href={"/Product_details_page"}>Product Details</Link>
-                </li>
-                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                    <Link href={"/About_us_page"}>About Us</Link>
-                </li>
+                <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300 rounded-b-lg">
+                    Option 3
+                </li> */}
             </ul>
         </li>
-        {/* <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-            Option 2
-        </li>
-        <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300 rounded-b-lg">
-            Option 3
-        </li> */}
-    </ul>
-</li>
-
-
-                        <li className="my-auto h-[20px] cursor-pointer">Products</li>
-                        <li className="my-auto h-[20px] cursor-pointer"><Link href={'/Blog_web_page'}>Blog</Link></li>
-                        <li className="my-auto h-[20px] cursor-pointer">Shop</li>
-                        <li className="my-auto h-[20px] cursor-pointer"><Link href={'/Contact_us_page'}>Contact Us</Link></li>
+        
+        
+                                <li className="my-auto h-[20px] cursor-pointer">Products</li>
+                                <li className="my-auto h-[20px] cursor-pointer"><Link href={'/Blog_web_page'}>Blog</Link></li>
+                                <li className="my-auto h-[20px] cursor-pointer">Shop</li>
+                                <li className="my-auto h-[20px] cursor-pointer"><Link href={'/Contact_us_page'}>Contact Us</Link></li>
+                            </ul>
+                        </div>
+                        <p className="font-[Josefin Sans] font-bold text-md text-[#0D0E43]"><RealTimeDate /></p>
+                    </div>
+                </div>
+            </nav>
+                {children}
+                <footer className="w-full bg-white text-black flex flex-col">
+                    <div className="min-h-[320px] max-h-[500px] bg-[#EEEFFB] flex justify-center py-6">
+                        <div className="flex flex-col justify-center">
+                            <div className="flex gap-20">
+                                <div className="flex flex-col gap-8">
+                                <h3 className="text-[24px] lg:text-[38px] leading-[30px] lg:leading-[44.53px] font-bold">ShopEasy</h3>                            <div className="w-full sm:w-[377px]">
+                                        <input type="text" className="opacity-45 bg-[#FFFFFF] h-[36px] sm:h-[44px] w-3/4 px-4" placeholder="Enter Email Address" />
+                                        <button type="button" className="rounded-[3px] h-[36px] sm:h-[39px] bg-[#FB2E86] w-3/12 text-white">Sign Up</button>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">Contact Info</p>
+                                        <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">17 Princess Road, London, Greater London NW1 8JR, UK</p>
+                                    </div>
+                                </div>
+                                <div className="hidden lg:flex xl:flex 2xl:flex gap-20">
+                                    <div className="flex flex-col gap-10">
+                                        <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Catagories</p>
+                                        <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
+                                            <li className="cursor-pointer">Laptops & Computers</li>
+                                            <li className="cursor-pointer">Cameras & Photography</li>
+                                            <li className="cursor-pointer">Smart Phones & Tablets</li>
+                                            <li className="cursor-pointer">Video Games & Consoles</li>
+                                            <li className="cursor-pointer">Waterproof Headphones</li>
+                                        </ul>
+                                    </div>
+                                    <div className="flex flex-col gap-10">
+                                        <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Customer Care</p>
+                                        <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
+                                            <li className="cursor-pointer">My Account</li>
+                                            <li className="cursor-pointer">Discount</li>
+                                            <li className="cursor-pointer">Returns</li>
+                                            <li className="cursor-pointer">Orders History</li>
+                                            <li className="cursor-pointer">Order Tracking</li>
+                                        </ul>
+                                    </div>
+                                    <div className="flex flex-col gap-10">
+                                        <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Pages</p>
+                                        <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
+                                            <li className="cursor-pointer">Blog</li>
+                                            <li className="cursor-pointer">Browse the Shop</li>
+                                            <li className="cursor-pointer">Category</li>
+                                            <li className="cursor-pointer">Pre-Built Pages</li>
+                                            <li className="cursor-pointer">Visual Composer Elements</li>
+                                            <li className="cursor-pointer">WooCommerce Pages</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex lg:hidden xl:hidden 2xl:hidden justify-center bg-[#EEEFFB]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 py-8">
+                <div className="flex flex-col gap-6">
+                    <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Categories</p>
+                    <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
+                        <li className="cursor-pointer">Laptops & Computers</li>
+                        <li className="cursor-pointer">Cameras & Photography</li>
+                        <li className="cursor-pointer">Smart Phones & Tablets</li>
+                        <li className="cursor-pointer">Video Games & Consoles</li>
+                        <li className="cursor-pointer">Waterproof Headphones</li>
                     </ul>
                 </div>
-                <div className="flex mt-2 md:mt-0 cursor-pointer">
-                    <input placeholder="Search..." className="border-[2px] border-[#E7E6EF] w-[317px]" />
-                    <div className="bg-[#FB2E86] w-12 flex justify-center">
-                        <div className="my-auto">
-                            <i className="fa-solid fa-magnifying-glass" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
-                        </div>
-                    </div>
+                <div className="flex flex-col gap-6">
+                    <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Customer Care</p>
+                    <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
+                        <li className="cursor-pointer">My Account</li>
+                        <li className="cursor-pointer">Discount</li>
+                        <li className="cursor-pointer">Returns</li>
+                        <li className="cursor-pointer">Orders History</li>
+                        <li className="cursor-pointer">Order Tracking</li>
+                    </ul>
+                </div>
+                <div className="flex flex-col gap-6">
+                    <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Pages</p>
+                    <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
+                        <li className="cursor-pointer">Blog</li>
+                        <li className="cursor-pointer">Browse the Shop</li>
+                        <li className="cursor-pointer">Category</li>
+                        <li className="cursor-pointer">Pre-Built Pages</li>
+                        <li className="cursor-pointer">Visual Composer Elements</li>
+                        <li className="cursor-pointer">WooCommerce Pages</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </nav>
-        {children}
-        <footer className="w-full bg-white text-black flex flex-col">
-            <div className="min-h-[320px] max-h-[500px] bg-[#EEEFFB] flex justify-center py-6">
-                <div className="flex flex-col justify-center">
-                    <div className="flex gap-20">
-                        <div className="flex flex-col gap-8">
-                        <h3 className="text-[24px] lg:text-[38px] leading-[30px] lg:leading-[44.53px] font-bold">ShopEasy</h3>                            <div className="w-full sm:w-[377px]">
-                                <input type="text" className="opacity-45 bg-[#FFFFFF] h-[36px] sm:h-[44px] w-3/4 px-4" placeholder="Enter Email Address" />
-                                <button type="button" className="rounded-[3px] h-[36px] sm:h-[39px] bg-[#FB2E86] w-3/12 text-white">Sign Up</button>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">Contact Info</p>
-                                <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">17 Princess Road, London, Greater London NW1 8JR, UK</p>
-                            </div>
+        
+        
+                    <div className="h-[54px] bg-[#E7E4F8] flex justify-around">
+                        <div className="flex flex-col justify-center">
+                            <p className="font-[Lato] font-semibold text-[16px] leading-[19.2px] text-[#9DA0AE]">©Webecy - All Rights Reserved</p>
                         </div>
-                        <div className="hidden lg:flex xl:flex 2xl:flex gap-20">
-                            <div className="flex flex-col gap-10">
-                                <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Catagories</p>
-                                <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
-                                    <li className="cursor-pointer">Laptops & Computers</li>
-                                    <li className="cursor-pointer">Cameras & Photography</li>
-                                    <li className="cursor-pointer">Smart Phones & Tablets</li>
-                                    <li className="cursor-pointer">Video Games & Consoles</li>
-                                    <li className="cursor-pointer">Waterproof Headphones</li>
-                                </ul>
-                            </div>
-                            <div className="flex flex-col gap-10">
-                                <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Customer Care</p>
-                                <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
-                                    <li className="cursor-pointer">My Account</li>
-                                    <li className="cursor-pointer">Discount</li>
-                                    <li className="cursor-pointer">Returns</li>
-                                    <li className="cursor-pointer">Orders History</li>
-                                    <li className="cursor-pointer">Order Tracking</li>
-                                </ul>
-                            </div>
-                            <div className="flex flex-col gap-10">
-                                <p className="font-[Josefin Sans] text-[22px] leading-[25.78px]">Pages</p>
-                                <ul className="flex flex-col gap-4 font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#8A8FB9]">
-                                    <li className="cursor-pointer">Blog</li>
-                                    <li className="cursor-pointer">Browse the Shop</li>
-                                    <li className="cursor-pointer">Category</li>
-                                    <li className="cursor-pointer">Pre-Built Pages</li>
-                                    <li className="cursor-pointer">Visual Composer Elements</li>
-                                    <li className="cursor-pointer">WooCommerce Pages</li>
-                                </ul>
+                        <div className="flex flex-col justify-center">
+                            <div className="w-20 h-5 flex gap-2">
+                                <i className="fa-brands fa-facebook cursor-pointer"></i>
+                                <i className="fa-brands fa-instagram cursor-pointer"></i>
+                                <i className="fa-brands fa-twitter cursor-pointer"></i>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className="flex lg:hidden xl:hidden 2xl:hidden justify-center bg-[#EEEFFB]">
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 py-8">
-        <div className="flex flex-col gap-6">
-            <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Categories</p>
-            <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
-                <li className="cursor-pointer">Laptops & Computers</li>
-                <li className="cursor-pointer">Cameras & Photography</li>
-                <li className="cursor-pointer">Smart Phones & Tablets</li>
-                <li className="cursor-pointer">Video Games & Consoles</li>
-                <li className="cursor-pointer">Waterproof Headphones</li>
-            </ul>
-        </div>
-        <div className="flex flex-col gap-6">
-            <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Customer Care</p>
-            <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
-                <li className="cursor-pointer">My Account</li>
-                <li className="cursor-pointer">Discount</li>
-                <li className="cursor-pointer">Returns</li>
-                <li className="cursor-pointer">Orders History</li>
-                <li className="cursor-pointer">Order Tracking</li>
-            </ul>
-        </div>
-        <div className="flex flex-col gap-6">
-            <p className="font-[Josefin Sans] text-[18px] md:text-[22px] leading-[24px] md:leading-[26px]">Pages</p>
-            <ul className="flex flex-col gap-3 md:gap-4 font-[Lato] font-normal text-[14px] md:text-[16px] leading-[18px] md:leading-[19.2px] text-[#8A8FB9]">
-                <li className="cursor-pointer">Blog</li>
-                <li className="cursor-pointer">Browse the Shop</li>
-                <li className="cursor-pointer">Category</li>
-                <li className="cursor-pointer">Pre-Built Pages</li>
-                <li className="cursor-pointer">Visual Composer Elements</li>
-                <li className="cursor-pointer">WooCommerce Pages</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-
-            <div className="h-[54px] bg-[#E7E4F8] flex justify-around">
-                <div className="flex flex-col justify-center">
-                    <p className="font-[Lato] font-semibold text-[16px] leading-[19.2px] text-[#9DA0AE]">©Webecy - All Rights Reserved</p>
-                </div>
-                <div className="flex flex-col justify-center">
-                    <div className="w-20 h-5 flex gap-2">
-                        <i className="fa-brands fa-facebook cursor-pointer"></i>
-                        <i className="fa-brands fa-instagram cursor-pointer"></i>
-                        <i className="fa-brands fa-twitter cursor-pointer"></i>
-                    </div>
-                </div>
-            </div>
-        </footer>
+                </footer>
+                </ClientWrapper>
       </body>
     </html>
-    </ClerkProvider>
   );
 }

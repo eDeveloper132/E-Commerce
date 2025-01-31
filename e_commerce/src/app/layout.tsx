@@ -35,8 +35,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
     <nav className="w-full bg-white text-black">
-        <div className="flex bg-[#7E33E0] font-[Josefin Sans] font-bold h-11 justify-evenly py-2 flex-wrap px-4">
-            <div className="flex gap-4 justify-between w-full md:w-1/2 lg:w-1/4">
+        <div className="flex bg-[#7E33E0] items-center font-[Josefin Sans] font-bold h-11 justify-evenly flex-wrap px-4">
+            <div className="flex gap-4 justify-between w-full md:w-1/2 lg:w-1/4 items-center">
                 <div className="flex gap-3">
                     <i className="fa-regular fa-envelope my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
                     <span className="text-white my-auto cursor-pointer">mhhasanul@gmail.com</span>
@@ -46,8 +46,8 @@ export default function RootLayout({
                     <span className="text-white my-auto cursor-pointer">(12345)67890</span>
                 </div>
             </div>
-            <div className="flex gap-4 w-full md:w-1/2 lg:w-1/4 mt-2 md:mt-0">
-                <ul className="flex gap-4 text-white flex-wrap">
+            <div className="flex gap-4 w-full md:w-1/2 lg:w-1/4 mt-2 md:mt-0 items-center">
+                <ul className="flex gap-4 text-white flex-wrap items-center">
                     <li className="flex gap-2 my-auto cursor-pointer">English <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
                     <li className="flex gap-2 my-auto cursor-pointer">USD <i className="fa-solid fa-caret-down my-auto cursor-pointer"></i></li>
                     <li className="flex gap-2 my-auto cursor-pointer">Wishlist <i className="fa-regular fa-heart my-auto cursor-pointer"></i></li>
@@ -55,7 +55,7 @@ export default function RootLayout({
                 <Link href={'/Shopping_curt_page'}>
                 <i className="fa-solid fa-cart-shopping my-auto cursor-pointer" aria-hidden="true" style={{ color: 'white', fill: 'transparent' }}></i>
                 </Link>
-                <div>
+                <div className="mt-1">
                     <SignedOut>
                     <SignInButton />
                     </SignedOut>

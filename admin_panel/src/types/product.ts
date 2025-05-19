@@ -1,0 +1,35 @@
+export type Product = {
+  _id: string;               // Added by Sanity for all documents
+  _type: 'product';          // Matches schema name
+  _createdAt?: string;       // Optional, added by Sanity
+  _updatedAt?: string;       // Optional, added by Sanity
+
+  image: {
+    _type: 'image';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    hotspot?: {
+      x: number;
+      y: number;
+      height: number;
+      width: number;
+    };
+    crop?: {
+      top: number;
+      bottom: number;
+      left: number;
+      right: number;
+    };
+  };                          // Required image
+
+  name: string;               // Required string (3–100 chars)
+  price: number;              // Required number (≥ 0)
+  stock: number;              // Required number (≥ 0)
+
+  category?: string;          // Optional string (e.g. “Electronics”)
+  tag?: string;               // Optional string (search keywords)
+  rating: number;             // Required number (≥ 0)
+  description?: string;       // Optional string
+};

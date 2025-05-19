@@ -2,21 +2,29 @@
 import React, { useState, useEffect } from "react";
 
 const RealTimeDate = () => {
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Update the date every second
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentDate(new Date().toISOString());
-    }, 1000); // Update every 1000ms (1 second)
+      setCurrentDate(new Date());
+    }, 1000); // Update every 1 second
 
-    // Cleanup the interval on component unmount
+    // Cleanup interval on unmount
     return () => clearInterval(intervalId);
   }, []);
 
+  // Format date to a concise, readable string
+  const formattedDate = currentDate.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
-    <p className="font-[Josefin Sans] font-bold text-2xl text-[#0D0E43]">
-      {currentDate}
+    <p className="font-[Josefin Sans] font-bold text-lg md:text-2xl text-white">
+      {formattedDate}
     </p>
   );
 };

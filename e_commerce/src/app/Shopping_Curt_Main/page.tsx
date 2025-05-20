@@ -1,402 +1,283 @@
-import Image from "next/image"
-import curt_item_1 from "../../../public/curt_item_1.jpeg"
-import curt_item_2 from "../../../public/curt_item_2.jpeg"
-import curt_item_3 from "../../../public/curt_item_3.jpeg"
-import curt_item_4 from "../../../public/curt_item_4.jpeg"
-import curt_item_5 from "../../../public/curt_item_5.jpeg"
-import Link from "next/link"
-export default function Shopping_Curt_Main() {
-    return(
+'use client';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+type CartItem = {
+  name: string;
+  price: number;
+  quantity: number;
+  stock: number;
+  imgs: string;
+};
+
+const EXPIRY_MS = 60 * 60 * 1000; // 1 hour
+const STORAGE_KEY = 'cartData';
+const LEGACY_KEY  = 'cart';
+
+export default function ShoppingCartMain() {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Load & migrate on first mount
+  useEffect(() => {
+    const rawNew = localStorage.getItem(STORAGE_KEY);
+    const rawOld = localStorage.getItem(LEGACY_KEY);
+
+    let items: CartItem[] = [];
+    let updatedAt = Date.now();
+
+    const tryParse = (val: string | null) => {
+      try {
+        return val ? JSON.parse(val) : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const newParsed = tryParse(rawNew);
+    const oldParsed = tryParse(rawOld);
+
+    if (
+      (!newParsed?.items || newParsed.items.length === 0) &&
+      Array.isArray(oldParsed) &&
+      oldParsed.length > 0
+    ) {
+      items = oldParsed;
+      updatedAt = Date.now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, updatedAt }));
+      localStorage.removeItem(LEGACY_KEY);
+    } else if (
+      newParsed?.items &&
+      Array.isArray(newParsed.items) &&
+      typeof newParsed.updatedAt === 'number'
+    ) {
+      const isExpired = Date.now() - newParsed.updatedAt > EXPIRY_MS;
+      if (!isExpired) {
+        items = newParsed.items;
+        updatedAt = newParsed.updatedAt;
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    items = items.map(item => ({
+      ...item,
+      quantity: Math.min(item.quantity, item.stock),
+    }));
+
+    setCart(items);
+    setHydrated(true);
+  }, []);
+
+  // Sync & recalc after hydration
+  useEffect(() => {
+    if (!hydrated) return;
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    setGrandTotal(total);
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ items: cart, updatedAt: Date.now() })
+    );
+  }, [cart, hydrated]);
+
+  const increment = (idx: number) =>
+    setCart(old =>
+      old.map((it, i) =>
+        i === idx && it.quantity < it.stock
+          ? { ...it, quantity: it.quantity + 1 }
+          : it
+      )
+    );
+
+  const decrement = (idx: number) =>
+    setCart(old =>
+      old.map((it, i) =>
+        i === idx && it.quantity > 1
+          ? { ...it, quantity: it.quantity - 1 }
+          : it
+      )
+    );
+
+  const removeItem = (idx: number) =>
+    setCart(old => old.filter((_, i) => i !== idx));
+
+  const clearCart = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setCart([]);
+  };
+
+  if (!hydrated) return null;
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 my-20">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+        Shopping Cart
+      </h2>
+
+      {cart.length === 0 ? (
+        <p className="p-6 text-center text-gray-600">
+          Your cart is empty.
+        </p>
+      ) : (
         <>
-                        <div className="h-[286px] bg-[#F6F5FF] flex flex-col justify-center">
-                <div className="flex xs250:w-screen xs250:justify-center sm:w-screen sm:justify-center md:w-screen md:justify-center lg:w-5/12 lg:justify-end xl:w-5/12 xl:justify-end 2xl:w-5/12 2xl:justify-end">
-                    <div className="flex flex-col">
-                        <p className="font-[Josefin Sans] text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] leading-[30px] sm:leading-[34px] md:leading-[38px] lg:leading-[42.19px] text-[#101750] font-bold">
-                            Shopping Curt
+          {/* Table view for md+ */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full table-auto border-separate border-spacing-y-4">
+              <thead>
+                <tr className="text-left text-gray-700">
+                  <th className="py-2">Product</th>
+                  <th className="py-2">Unit Price</th>
+                  <th className="py-2">Quantity</th>
+                  <th className="py-2">Line Total</th>
+                  <th className="py-2"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart.map((item, idx) => {
+                  const lineTotal = item.price * item.quantity;
+                  const img = item.imgs || '/placeholder.png';
+                  return (
+                    <tr
+                      key={idx}
+                      className="bg-white shadow-sm rounded-lg hover:bg-gray-50 transition"
+                    >
+                      <td className="flex items-center gap-4 p-4">
+                        <button
+                          onClick={() => removeItem(idx)}
+                          className="text-red-500 font-bold text-xl"
+                        >
+                          ×
+                        </button>
+                        <Image
+                          src={img}
+                          width={80}
+                          height={80}
+                          alt={item.name}
+                          className="rounded"
+                        />
+                        <span className="font-medium text-gray-800">
+                          {item.name}
+                        </span>
+                      </td>
+                      <td className="p-4 text-gray-600">
+                        ${item.price.toFixed(2)}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center space-x-2 text-black">
+                          <button
+                            onClick={() => decrement(idx)}
+                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50 cursor-pointer"
+                            disabled={item.quantity <= 1}
+                          >
+                            –
+                          </button>
+                          <span className="text-gray-800">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => increment(idx)}
+                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50 cursor-pointer"
+                            disabled={item.quantity >= item.stock}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">
+                          / {item.stock} in stock
                         </p>
-                        <div className="flex">
-                            <p className="text-black text-[12px] sm:text-[14px] md:text-[16px] leading-[16px] sm:leading-[18px] md:leading-[19.2px]">
-                                Home.Pages.
-                            </p>
-                            <p className="text-[#FB2E86] font-[Lato] font-semibold text-[14px] sm:text-[16px] leading-[18px] sm:leading-[19.2px] my-auto">
-                                shopping curt
-                            </p>
-                        </div>
+                      </td>
+                      <td className="p-4 font-semibold text-gray-800">
+                        ${lineTotal.toFixed(2)}
+                      </td>
+                      <td className="p-4"></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Card view for mobile */}
+          <div className="md:hidden">
+            {cart.map((item, idx) => {
+              const lineTotal = item.price * item.quantity;
+              const img = item.imgs || '/placeholder.png';
+              return (
+                <div
+                  key={idx}
+                  className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-medium text-gray-800">{item.name}</h3>
+                    <button
+                      onClick={() => removeItem(idx)}
+                      className="text-red-500 text-lg"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="flex items-center mb-3">
+                    <Image
+                      src={img}
+                      width={60}
+                      height={60}
+                      alt={item.name}
+                      className="rounded mr-3"
+                    />
+                    <span className="text-gray-600">${item.price.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => decrement(idx)}
+                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                        disabled={item.quantity <= 1}
+                      >
+                        –
+                      </button>
+                      <span className="text-gray-800">{item.quantity}</span>
+                      <button
+                        onClick={() => increment(idx)}
+                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                        disabled={item.quantity >= item.stock}
+                      >
+                        +
+                      </button>
                     </div>
+                    <p className="text-sm text-gray-400">
+                      / {item.stock} in stock
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-800">
+                      Total: ${lineTotal.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <button
+              onClick={clearCart}
+              className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              Clear Cart
+            </button>
+            <div className="text-2xl font-bold text-gray-800">
+              Grand Total: ${grandTotal.toFixed(2)}
             </div>
-
-            <div className="hidden lg:flex xl:flex 2xl:flex justify-center my-24 gap-16 bg-white">
-                <div className="flex flex-col gap-6">
-                    <div className="flex gap-2">
-                        <div className="flex flex-col gap-5">
-                            <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold mb-8">Product</h1>
-                            <div className="w-[250px] h-[88px] flex gap-3 relative">
-                                <div className="absolute -top-[5px] left-[75px] w-3 h-3 rounded-full bg-black flex justify-center">
-                                    <div className="flex flex-col justify-center">
-                                        <i className="fa-solid fa-xmark text-white text-[8px] leading-[8px] cursor-pointer"></i>
-                                    </div>
-                                </div>
-                                <Image src={curt_item_1} width={84} className="h-[88px]" alt="image"></Image>
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px]'>Ut diam consequat</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Color: Brown</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Size: XL</p>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[250px] h-[88px] flex gap-3 relative">
-                                <div className="absolute -top-[5px] left-[75px] w-3 h-3 rounded-full bg-black flex justify-center">
-                                    <div className="flex flex-col justify-center">
-                                        <i className="fa-solid fa-xmark text-white text-[8px] leading-[8px] cursor-pointer"></i>
-                                    </div>
-                                </div>
-                                <Image src={curt_item_2} width={84} className="h-[88px]" alt="image"></Image>
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px]'>Vel faucibus posuere</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Color: Brown</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Size: XL</p>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[250px] h-[88px] flex gap-3 relative">
-                                <div className="absolute -top-[5px] left-[75px] w-3 h-3 rounded-full bg-black flex justify-center">
-                                    <div className="flex flex-col justify-center">
-                                        <i className="fa-solid fa-xmark text-white text-[8px] leading-[8px] cursor-pointer"></i>
-                                    </div>
-                                </div>
-                                <Image src={curt_item_3} width={84} className="h-[88px]" alt="image"></Image>
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px]'>Ac vitae vestibulum</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Color: Brown</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Size: XL</p>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[250px] h-[88px] flex gap-3 relative">
-                                <div className="absolute -top-[5px] left-[75px] w-3 h-3 rounded-full bg-black flex justify-center">
-                                    <div className="flex flex-col justify-center">
-                                        <i className="fa-solid fa-xmark text-white text-[8px] leading-[8px] cursor-pointer"></i>
-                                    </div>
-                                </div>
-                                <Image src={curt_item_4} width={84} className="h-[88px]" alt="image"></Image>
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px]'>Elit massa diam</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Color: Brown</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Size: XL</p>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[250px] h-[88px] flex gap-3 relative">
-                                <div className="absolute -top-[5px] left-[75px] w-3 h-3 rounded-full bg-black flex justify-center">
-                                    <div className="flex flex-col justify-center">
-                                        <i className="fa-solid fa-xmark text-white text-[8px] leading-[8px] cursor-pointer"></i>
-                                    </div>
-                                </div>
-                                <Image src={curt_item_5} width={84} className="h-[88px]" alt="image"></Image>
-                                <div className="flex flex-col gap-1 justify-center">
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px]'>Proin pharetra elementum</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Color: Brown</p>
-                                    <p className='font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#A1A8C1]'>Size: XL</p>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                        </div>
-                        <div className="flex flex-col gap-5">
-                            <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center mb-8">Price</h1>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center text-[14px] leading-[16.41px] font-[Josefin Sans] text-[#15245E]">
-                                <span className="flex justify-center">
-                                    $32.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center text-[14px] leading-[16.41px] font-[Josefin Sans] text-[#15245E]">
-                                <span className="flex justify-center">
-                                    $32.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center text-[14px] leading-[16.41px] font-[Josefin Sans] text-[#15245E]">
-                                <span className="flex justify-center">
-                                    $32.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center text-[14px] leading-[16.41px] font-[Josefin Sans] text-[#15245E]">
-                                <span className="flex justify-center">
-                                    $32.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center text-[14px] leading-[16.41px] font-[Josefin Sans] text-[#15245E]">
-                                <span className="flex justify-center">
-                                    $32.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                        </div>
-                        <div className="flex flex-col gap-5">
-                            <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center mb-8">Quantity</h1>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">-</button>
-                                    </span>
-                                    <span className="w-8 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <span className="font-[Josefin Sans] text-[12px] leading-[14.06px] text-[#BEBFC2] flex flex-col justify-center">1</span>
-                                    </span>
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">+</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">-</button>
-                                    </span>
-                                    <span className="w-8 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <span className="font-[Josefin Sans] text-[12px] leading-[14.06px] text-[#BEBFC2] flex flex-col justify-center">1</span>
-                                    </span>
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">+</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">-</button>
-                                    </span>
-                                    <span className="w-8 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <span className="font-[Josefin Sans] text-[12px] leading-[14.06px] text-[#BEBFC2] flex flex-col justify-center">1</span>
-                                    </span>
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">+</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">-</button>
-                                    </span>
-                                    <span className="w-8 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <span className="font-[Josefin Sans] text-[12px] leading-[14.06px] text-[#BEBFC2] flex flex-col justify-center">1</span>
-                                    </span>
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">+</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="w-[80px] h-[88px] flex flex-col justify-center">
-                                <div className="flex justify-center">
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">-</button>
-                                    </span>
-                                    <span className="w-8 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <span className="font-[Josefin Sans] text-[12px] leading-[14.06px] text-[#BEBFC2] flex flex-col justify-center">1</span>
-                                    </span>
-                                    <span className="w-3 h-4 bg-[#E7E7EF] flex justify-center">
-                                        <button type="button" className="flex flex-col justify-center text-[#BEBFC2]">+</button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                        </div>
-                        <div className="flex flex-col gap-5">
-                            <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center mb-8">Total</h1>
-                            <div className="font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#15245E] w-[80px] h-[88px] flex justify-center">
-                                <span className="flex flex-col justify-center">
-                                    £219.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#15245E] w-[80px] h-[88px] flex justify-center">
-                                <span className="flex flex-col justify-center">
-                                    £219.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#15245E] w-[80px] h-[88px] flex justify-center">
-                                <span className="flex flex-col justify-center">
-                                    £219.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#15245E] w-[80px] h-[88px] flex justify-center">
-                                <span className="flex flex-col justify-center">
-                                    £219.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                            <div className="font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#15245E] w-[80px] h-[88px] flex justify-center">
-                                <span className="flex flex-col justify-center">
-                                    £219.00
-                                </span>
-                            </div>
-                            <div className="border-b-[1px] border-solid border-[#BEBFC2]"></div>
-                        </div>
-                    </div>
-                    <div className="flex justify-between">
-                        <button type="button" className="w-[134px] h-10 rounded-sm bg-[#FB2E86] text-white">Update Curt</button>
-                        <button type="button" className="w-[134px] h-10 rounded-sm bg-[#FB2E86] text-white">Clear Curt</button>
-                    </div>
-                </div>
-                <div className="flex flex-col w-[372px]">
-                    <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center mb-8">Cart Totals</h1>
-                    <div className="flex flex-col gap-[58px] w-[372px]">
-                        <div className="flex flex-col justify-center h-[284px] rounded-[3px] bg-[#F4F4FC]">
-                            <div className="flex justify-between mx-6">
-                                <p className="font-[Lato] font-semibold text-[18px] leading-[21.06px] text-[#1D3178]">Subtotals:</p>
-                                <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#15245E]">£219.00</p>
-                            </div>
-                            <span className="border-2 border-[#E8E6F1] w-[310px] mx-auto mt-2"></span>
-                            <div className="flex justify-between mx-6 mt-8">
-                                <p className="font-[Lato] font-semibold text-[18px] leading-[21.06px] text-[#1D3178]">Totals:</p>
-                                <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#15245E]">£325.00</p>
-                            </div>
-                            <span className="border-2 border-[#E8E6F1] w-[310px] mx-auto mt-2"></span>
-                            <span className="flex gap-2 mx-8 mt-8">
-                                <i className="fa-solid fa-circle-check my-auto text-[#19D16F] text-xs"></i>
-                                <p className="font-[Lato] font-normal text-[14px] leading-[14.4px] text-[#8A91AB]">Shipping & taxes calculated at checkout</p>
-                            </span>
-                            <span className="mt-10 flex justify-center">
-                                <button type="button" className="w-[312px] h-10 rounded-[3px] bg-[#19D16F] text-white"><Link href={"/Order_completed_page"}>Proceed To Checkout</Link></button>
-                            </span>
-                        </div>
-                        <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center">Calculate Shopping</h1>
-                        <div className="flex flex-col justify-center h-[284px] rounded-[3px] bg-[#F4F4FC] gap-8">
-                            <div className="flex flex-col gap-10">
-                                <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                    <input type="text" placeholder="Bangladesh" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                    <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                </div>
-                                <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                    <input type="text" placeholder="Mirpur Dhaka - 1200" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                    <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                </div>                                
-                                <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                    <input type="text" placeholder="Postal Code" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                    <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                </div>                            
-                            </div>
-                            <span>
-                                <button type="button" className="w-[180px] h-[42px] rounded-sm bg-[#FB2E86] mx-8 text-white">Calculate Shiping</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex lg:hidden xl:hidden 2xl:hidden flex-col gap-8 p-4 bg-white">
-  <div className="flex flex-col gap-6">
-  <span className="flex justify-center my-2">
-        <h1 className="font-[Josefin Sans] text-[20px] text-[#1D3178] font-semibold">Product</h1>
-    </span>
-    {[curt_item_1, curt_item_2, curt_item_3, curt_item_4, curt_item_5].map((item, index) => (
-      <div key={index} className="w-full flex gap-4 items-center relative">
-        <div className="absolute -top-2 left-[68px] w-5 h-5 rounded-full bg-black flex justify-center items-center">
-          <i className="fa-solid fa-xmark text-white text-sm cursor-pointer"></i>
-        </div>
-        <Image src={item} width={84} height={88} className="h-[88px]" alt={`product ${index + 1}`} />
-        <div className="flex flex-col gap-1">
-          <p className="font-[Josefin Sans] text-[14px] text-[#1D3178]">Product Name {index + 1}</p>
-          <p className="font-[Josefin Sans] text-[14px] text-[#A1A8C1]">Color: Brown</p>
-          <p className="font-[Josefin Sans] text-[14px] text-[#A1A8C1]">Size: XL</p>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  <div className="flex flex-col gap-4">
-  <span className="flex justify-center my-2">
-        <h1 className="font-[Josefin Sans] text-[20px] text-[#1D3178] font-semibold">Price</h1>
-    </span>
-    {[32, 32, 32, 32, 32].map((price, index) => (
-      <div key={index} className="text-center font-[Josefin Sans] text-[14px] text-[#15245E]">${price}.00</div>
-    ))}
-  </div>
-
-  <div className="flex flex-col gap-4">
-  <span className="flex justify-center my-2">
-        <h1 className="font-[Josefin Sans] text-[20px] text-[#1D3178] font-semibold">Quantity</h1>
-    </span>
-    {Array(5).fill(0).map((_, index) => (
-      <div key={index} className="flex justify-center items-center gap-2">
-        <button className="w-6 h-6 bg-[#E7E7EF] text-[#BEBFC2] flex justify-center items-center">-</button>
-        <span className="w-8 h-6 bg-[#E7E7EF] text-center font-[Josefin Sans] text-[#BEBFC2]">1</span>
-        <button className="w-6 h-6 bg-[#E7E7EF] text-[#BEBFC2] flex justify-center items-center">+</button>
-      </div>
-    ))}
-  </div>
-
-  <div className="flex flex-col gap-4">
-    <span className="flex justify-center my-2">
-        <h1 className="font-[Josefin Sans] text-[20px] text-[#1D3178] font-semibold">Total</h1>
-    </span>
-    {[219, 219, 219, 219, 219].map((total, index) => (
-      <div key={index} className="text-center font-[Josefin Sans] text-[14px] text-[#15245E]">£{total}.00</div>
-    ))}
-  </div>
-
-  <div className="flex gap-4 justify-center">
-    <button className="w-[134px] h-10 bg-[#FB2E86] text-white rounded">Update Cart</button>
-    <button className="w-[134px] h-10 bg-[#FB2E86] text-white rounded">Clear Cart</button>
-  </div>
-</div>
-
-
-            <div className="flex lg:hidden xl:hidden 2xl:hidden justify-center mt-5 bg-white">
-                <div className="flex flex-col w-[372px]">
-                        <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center mb-8">Cart Totals</h1>
-                        <div className="flex flex-col gap-[58px] w-[372px]">
-                            <div className="flex flex-col justify-center h-[284px] rounded-[3px] bg-[#F4F4FC]">
-                                <div className="flex justify-between mx-6">
-                                    <p className="font-[Lato] font-semibold text-[18px] leading-[21.06px] text-[#1D3178]">Subtotals:</p>
-                                    <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#15245E]">£219.00</p>
-                                </div>
-                                <span className="border-2 border-[#E8E6F1] w-[310px] mx-auto mt-2"></span>
-                                <div className="flex justify-between mx-6 mt-8">
-                                    <p className="font-[Lato] font-semibold text-[18px] leading-[21.06px] text-[#1D3178]">Totals:</p>
-                                    <p className="font-[Lato] font-normal text-[16px] leading-[19.2px] text-[#15245E]">£325.00</p>
-                                </div>
-                                <span className="border-2 border-[#E8E6F1] w-[310px] mx-auto mt-2"></span>
-                                <span className="flex gap-2 mx-8 mt-8">
-                                    <i className="fa-solid fa-circle-check my-auto text-[#19D16F] text-xs"></i>
-                                    <p className="font-[Lato] font-normal text-[14px] leading-[14.4px] text-[#8A91AB]">Shipping & taxes calculated at checkout</p>
-                                </span>
-                                <span className="mt-10 flex justify-center">
-                                    <button type="button" className="w-[312px] h-10 rounded-[3px] bg-[#19D16F] text-white">Proceed To Checkout</button>
-                                </span>
-                            </div>
-                            <h1 className="font-[Josefin Sans] text-[20px] leading-[23.44px] text-[#1D3178] font-semibold flex justify-center">Calculate Shopping</h1>
-                            <div className="flex flex-col justify-center h-[284px] rounded-[3px] bg-[#F4F4FC] gap-8">
-                                <div className="flex flex-col gap-10">
-                                    <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                        <input type="text" placeholder="Bangladesh" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                        <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                    </div>
-                                    <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                        <input type="text" placeholder="Mirpur Dhaka - 1200" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                        <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                    </div>                                
-                                    <div className="flex flex-col gap-2 w-[307px] mx-auto">
-                                        <input type="text" placeholder="Postal Code" className="bg-[#F4F4FC] font-[Josefin Sans] text-[14px] leading-[16.41px] text-[#C5CBE3]" />
-                                        <span className="border-b-[1px] border-[#C7CEE4]"></span>
-                                    </div>                            
-                                </div>
-                                <span>
-                                    <button type="button" className="w-[180px] h-[42px] rounded-sm bg-[#FB2E86] mx-8 text-white">Calculate Shiping</button>
-                                </span>
-                            </div>
-                        </div>
-                </div>
-            </div>
+            <Link
+              href="/Order_completed_page"
+              className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
         </>
-    )
+      )}
+    </div>
+  );
 }

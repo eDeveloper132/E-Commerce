@@ -2,48 +2,85 @@
 // import IProduct from './types/IProduct';
 // import { urlFor } from '../sanity/lib/image'; // Assuming you have this utility function to get image URL
 // import { getProducts } from './api/products/products';
+import connectToDatabase from '../../lib/mongodb';
+import { ProfileModel } from '../../schema/profile';
 import MainHome from './Main/page';
 import { auth, currentUser } from '@clerk/nextjs/server';
 export default async function Home() {
-  const Auth = await auth()
-  console.log(Auth)
-  const user = await currentUser();
-  console.log(user)
-  // const Data = await getProducts();
+  await connectToDatabase();
+  const currentperson = await currentUser();
+  const { userId } = await auth();
+  const currentpersonidinmongoose = await ProfileModel.findOne({
+    clerk_user_id: currentperson?.id,
+  });
+  if (userId && !currentpersonidinmongoose && currentperson) {
+    await ProfileModel.create({
+      clerk_user_id: currentperson.id,
+      username: currentperson.fullName,
+      email: currentperson.emailAddresses?.[0]?.emailAddress,
+      phonenumber: currentperson.phoneNumbers?.[0]?.phoneNumber ?? "",
+      outh_provider: currentperson.externalAccounts?.[0]?.provider ?? "",
+      outh_provider_id: currentperson.externalAccounts?.[0]?.id ?? "",
+      outh_provider2: currentperson.externalAccounts?.[1]?.provider ?? "",
+      outh_provider2_id: currentperson.externalAccounts?.[1]?.id ?? "",
+      image_url: currentperson.imageUrl ?? "",
+    });
+  }
+  if (userId && currentpersonidinmongoose && currentperson) {
+    // Check and update fields that are missing (empty strings)
+    let updated = false;
+
+  if (currentpersonidinmongoose.username === "" && currentperson.fullName) {
+      currentpersonidinmongoose.username = currentperson.fullName;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.email === "" && currentperson.emailAddresses?.[0]?.emailAddress) {
+      currentpersonidinmongoose.email = currentperson.emailAddresses[0].emailAddress;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.phonenumber === "" && currentperson.phoneNumbers?.[0]?.phoneNumber) {
+      currentpersonidinmongoose.phonenumber = currentperson.phoneNumbers[0].phoneNumber;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.outh_provider === "" && currentperson.externalAccounts?.[0]?.provider) {
+      currentpersonidinmongoose.outh_provider = currentperson.externalAccounts[0].provider;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.outh_provider_id === "" && currentperson.externalAccounts?.[0]?.id) {
+      currentpersonidinmongoose.outh_provider_id = currentperson.externalAccounts[0].id;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.outh_provider2 === "" && currentperson.externalAccounts?.[1]?.provider) {
+      currentpersonidinmongoose.outh_provider2 = currentperson.externalAccounts[1].provider;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.outh_provider2_id === "" && currentperson.externalAccounts?.[1]?.id) {
+      currentpersonidinmongoose.outh_provider2_id = currentperson.externalAccounts[1].id;
+      updated = true;
+    }
+  if (currentpersonidinmongoose.image_url === "" && currentperson.imageUrl) {
+      currentpersonidinmongoose.image_url = currentperson.imageUrl;
+      updated = true;
+    }
+
+    // Save the document only if updates were made
+    if (updated) {
+      await currentpersonidinmongoose.save();
+    }
+  }
+
   return (
     <>
-      {/* <div className='flex justify-center'>
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-16">
-        {Data.map((product: IProduct) => {
-          // Check if product properties match the expected types
-          if (
-            typeof product.name === 'string' &&
-            typeof product.description === 'string' &&
-            typeof product.price === 'number'
-          ) {
-            // Resolving the image URL using the `urlFor` function (which you'd need to define)
-            const imageUrl = product.image ? urlFor(product.image).url() : '';
-            console.log(imageUrl)
-            return (
-              <div key={product._id} className='w-[200px] h-[300px]'>
-                <Products_Card
-                  name={product.name}
-                  description={product.description}
-                  price={product.price}
-                  stock={product.stock}
-                  category={product.category}
-                  tag={product.tag}
-                  rating={product.rating}
-                  image={imageUrl} // passing the resolved image URL directly
-                />
-              </div>
-            );
-          }
-          return null; // Don't render the card if type checks fail
-        })}
-      </div>
-      </div> */}
+    {userId ? (
     <MainHome />
+    ) : (
+      <div className="leading-relaxed px-4 sm:px-6">
+        <div className="flex flex-col justify-center items-center my-40 sm:my-60 text-center px-4">
+          <p className="text-lg sm:text-2xl font-bold text-red-500">Please login first to access.</p>
+        </div>
+      </div>
+    )
+    }
     </>
   );
 }

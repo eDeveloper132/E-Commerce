@@ -2,7 +2,6 @@ import { client } from "@/sanity/lib/client";
 import { Product } from "@/types/product";
 import { groq } from "next-sanity";
 
-
 export async function getProducts(): Promise<Product[]> {
   return client.fetch(
     groq`*[_type == "product"] {
@@ -10,14 +9,15 @@ export async function getProducts(): Promise<Product[]> {
       _type,
       _createdAt,
       _updatedAt,
-      image,
+      images,
       name,
       price,
       stock,
       category,
       tag,
       rating,
-      description
+      description,
+      video
     }`
   );
 }

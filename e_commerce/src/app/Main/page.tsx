@@ -16,15 +16,14 @@ export default async function MainHome() {
           <p className="font-[Lato] font-bold text-sm sm:text-base md:text-lg leading-6 sm:leading-7 md:leading-8 text-[#8A8FB9] pb-7">
             Welcome To Our E-Commerce Store
           </p>
-          <button
+          {/* <button
             type="button"
             className="bg-[#FB2E86] text-white font-[Josefin Sans] rounded-sm px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 text-sm sm:text-base md:text-lg"
           >
             Shop Now
-          </button>
+          </button> */}
         </div>
       </div>
-
       <ProductGrid productsData={productsData} />
     </main>
   );

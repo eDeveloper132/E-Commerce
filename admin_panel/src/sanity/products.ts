@@ -6,10 +6,11 @@ const productSchema = {
   type: 'document',
   fields: [
     {
-      name: 'image',
-      title: 'Product Image',
-      type: 'image',
-      validation: (Rule: Rule) => Rule.required(),
+      name: 'images',
+      title: 'Product Images',
+      type: 'array',
+      of: [{ type: 'image' }],
+      validation: (Rule: Rule) => Rule.required().min(3),
     },
     {
       name: 'name',
@@ -51,7 +52,15 @@ const productSchema = {
       name: 'description',
       title: 'Description',
       type: 'string',
-      description: 'Keywords for search filtering',
+      description: 'Product description', // Updated for clarity
+    },
+    {
+      name: 'video',
+      title: 'Product Video',
+      type: 'file',
+      options: {
+        accept: 'video/*',
+      },
     },
   ],
 };

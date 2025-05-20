@@ -1,4 +1,6 @@
+// components/Featured_Card.tsx
 import Image from "next/image";
+import Link from "next/link";
 
 // Utility function to truncate description to 10 words
 const truncateDescription = (text: string, maxWords: number): string => {
@@ -10,22 +12,23 @@ const truncateDescription = (text: string, maxWords: number): string => {
 };
 
 export default function Featured_Card({
+  id,
   name,
   description,
   price,
   image,
 }: {
+  id: string;
   name: string;
   description: string;
   price: number;
   image: string;
 }) {
-  // Truncate the description to 10 words
   const truncatedDescription = truncateDescription(description, 10);
 
   return (
     <div className="w-full group flex flex-col gap-3 shadow-lg pb-4 hover:shadow-xl transition-shadow duration-300 hover:bg-[#2F1AC4]">
-      {/* Image container with responsive aspect ratio */}
+      {/* Image container */}
       <div className="relative w-full aspect-[270/236] bg-[#F6F7FB] flex justify-center items-center">
         <Image
           src={image}
@@ -36,18 +39,20 @@ export default function Featured_Card({
         />
 
         {/* Overlay with icons */}
-        <div className="absolute inset-0 flex-col-reverse items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-30">
+        {/* <div className="absolute inset-0 flex-col-reverse items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-30">
           <i className="fa-solid fa-cart-shopping text-blue-950 text-lg md:text-xl cursor-pointer px-2 mt-2"></i>
           <i className="fa-regular fa-heart text-blue-500 text-lg md:text-xl cursor-pointer pr-2"></i>
-        </div>
+        </div> */}
 
-        {/* "View Details" button */}
-        <button className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-2 py-1 md:px-4 md:py-1 rounded-sm text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-green-600 font-[Josefin Sans] h-[29px] flex items-center justify-center">
-          View Details
-        </button>
+        {/* "View Details" button wrapped in Link */}
+        <Link href={`./Product_Main/${id}`}>
+          <button className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-2 py-1 md:px-4 md:py-1 rounded-sm text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-green-600 font-[Josefin Sans] h-[29px] flex items-center justify-center">
+            View Details
+          </button>
+        </Link>
       </div>
 
-      {/* Product details with responsive typography */}
+      {/* Product details */}
       <div className="text-[#FB2E86] group-hover:text-white font-[Lato] font-bold text-base md:text-lg text-center">
         {name}
       </div>
@@ -60,7 +65,7 @@ export default function Featured_Card({
         {truncatedDescription}
       </p>
       <p className="font-[Lato] font-normal text-sm md:text-base group-hover:text-white text-[#151875] text-center">
-        ${price}
+        {price}PKR
       </p>
     </div>
   );

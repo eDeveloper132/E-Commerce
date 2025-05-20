@@ -46,7 +46,7 @@ export default function RootLayout({
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <div className="flex flex-col gap-6">
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold">ShopEasy</h3>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full">
+                    {/* <div className="flex flex-col sm:flex-row gap-2 w-full">
                       <input
                         type="text"
                         className="opacity-45 bg-[#FFFFFF] h-9 sm:h-10 px-3 sm:px-4 w-full sm:w-3/4"
@@ -58,7 +58,7 @@ export default function RootLayout({
                       >
                         Sign Up
                       </button>
-                    </div>
+                    </div> */}
                     <div className="flex flex-col gap-2">
                       <p className="font-[Lato] font-normal text-sm sm:text-base text-[#8A8FB9]">
                         Contact Info

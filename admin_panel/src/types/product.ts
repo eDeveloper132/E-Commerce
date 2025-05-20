@@ -4,7 +4,7 @@ export type Product = {
   _createdAt?: string;       // Optional, added by Sanity
   _updatedAt?: string;       // Optional, added by Sanity
 
-  image: {
+  images: Array<{
     _type: 'image';
     asset: {
       _ref: string;
@@ -22,14 +22,22 @@ export type Product = {
       left: number;
       right: number;
     };
-  };                          // Required image
+  }>;                        // Required images (at least 3 per schema)
 
-  name: string;               // Required string (3–100 chars)
-  price: number;              // Required number (≥ 0)
-  stock: number;              // Required number (≥ 0)
+  name: string;              // Required string (3–100 chars)
+  price: number;             // Required number (≥ 0)
+  stock: number;             // Required number (≥ 0)
 
-  category?: string;          // Optional string (e.g. “Electronics”)
-  tag?: string;               // Optional string (search keywords)
-  rating: number;             // Required number (≥ 0)
-  description?: string;       // Optional string
+  category?: string;         // Optional string (e.g. “Electronics”)
+  tag?: string;              // Optional string (search keywords)
+  rating: number;            // Required number (≥ 0)
+  description?: string;      // Optional string
+
+  video?: {
+    _type: 'file';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+  };                         // Optional video file
 };

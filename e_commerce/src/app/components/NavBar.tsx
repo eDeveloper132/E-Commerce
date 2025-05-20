@@ -60,10 +60,10 @@ export default function Navbar() {
                 <i className="fa-solid fa-caret-down text-sm"></i>
                 <ul className="absolute hidden group-hover:block top-full left-0 bg-white shadow-lg text-gray-800 rounded-lg w-48">
                   <li className="relative px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300 rounded-t-lg group">
-                    Pages
+                    Page
                     <i className="fa-solid fa-caret-right ml-2 text-sm"></i>
                     <ul className="absolute hidden group-hover:block top-0 left-full bg-white shadow-lg text-gray-800 rounded-lg ml-1 w-48">
-                      <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
+                      {/* <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
                         <Link href="/Shop_grid_page">Shop Grid Default</Link>
                       </li>
                       <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
@@ -71,10 +71,7 @@ export default function Navbar() {
                       </li>
                       <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
                         <Link href="/Shop_left_page">Shop Left</Link>
-                      </li>
-                      <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
-                        <Link href="/Product_details_page">Product Details</Link>
-                      </li>
+                      </li> */}
                       <li className="px-4 py-2 hover:bg-[#FB2E86] hover:text-white cursor-pointer transition-colors duration-300">
                         <Link href="/About_us_page">About Us</Link>
                       </li>
@@ -82,11 +79,11 @@ export default function Navbar() {
                   </li>
                 </ul>
               </li>
-               <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Products</li>
+               {/* <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Products</li>
         <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">
           <Link href="/Blog_web_page">Blog</Link>
         </li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Shop</li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Shop</li> */}
         <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">
           <Link href="/Contact_us_page">Contact Us</Link>
         </li>

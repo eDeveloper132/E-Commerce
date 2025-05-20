@@ -18,7 +18,7 @@ interface Props {
 
 export default function ProductGrid({ productsData }: Props) {
   if (!productsData || productsData.length === 0) {
-    return <p className="text-center py-20">No products available.</p>;
+    return <p className="text-center py-20 text-black">No products available.</p>;
   }
 
   // Group products by category
@@ -42,7 +42,7 @@ export default function ProductGrid({ productsData }: Props) {
           {/* Grid for this category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6 md:px-8 lg:px-10">
             {items.map((product) => {
-              const ref = product.image?.asset?._ref;
+              const ref = product.images?.[0]?.asset?._ref;
               const imageUrl = getSanityImageUrl(ref);
 
               // Basic null-checking
@@ -53,6 +53,7 @@ export default function ProductGrid({ productsData }: Props) {
               return (
                 <Featured_Card
                   key={product._id}
+                  id={product._id}
                   name={product.name}
                   description={product.description ?? ""}
                   price={product.price}

@@ -7,34 +7,45 @@ if (!process.env.MONGODB_URI) {
 
 const uri = process.env.MONGODB_URI;
 
-const options = {
+const options: mongoose.ConnectOptions = {
   appName: 'devrel.template.nextjs',
-  // Add more Mongoose-specific options here if needed
+  // …any other mongoose options
 };
 
 interface MongooseGlobal {
-  mongoose: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  };
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose | null> | null;
 }
 
 // Augment globalThis to include our custom mongoose cache
 declare global {
-  // eslint-disable-next-line no-var
-  var mongoose: MongooseGlobal['mongoose'];
+  // disable eslint here since TS requires var in declare global
+  /* eslint-disable-next-line no-var */
+  var mongoose: MongooseGlobal;
 }
 
-// Avoid reinitializing in dev hot reload
+// Initialize cache on first import
 global.mongoose ??= { conn: null, promise: null };
 
-async function connectToDatabase() {
+async function connectToDatabase(): Promise<typeof mongoose | null> {
   if (global.mongoose.conn) {
     return global.mongoose.conn;
   }
 
   if (!global.mongoose.promise) {
-    global.mongoose.promise = mongoose.connect(uri, options).then((mongoose) => mongoose);
+    global.mongoose.promise = mongoose
+      .connect(uri, options)
+      .then((mongooseInstance) => {
+        mongooseInstance.connection.on('error', (err) => {
+          console.error('⚠️ Mongoose connection error:', err);
+        });
+        console.log('✅ MongoDB connected');
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        console.error('❌ Failed to connect to MongoDB:', err);
+        return null;
+      });
   }
 
   global.mongoose.conn = await global.mongoose.promise;

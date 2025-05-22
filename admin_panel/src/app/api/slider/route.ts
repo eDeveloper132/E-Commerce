@@ -1,4 +1,4 @@
-import { getProducts } from "@/lib/sanity";
+import { getImageGallery } from "@/lib/sanity";
 import { NextResponse } from "next/server";
 
 // CORS Headers
@@ -12,11 +12,11 @@ const corsHeaders = {
 
 export async function GET() {
   try {
-    const data = await getProducts();
+    const data = await getImageGallery();
     return NextResponse.json(data, { headers: corsHeaders });
   } catch (error) {
     return NextResponse.json(
-      { message: "Failed to fetch products", error },
+      { message: "Failed to fetch slider", error },
       { status: 500, headers: corsHeaders }
     );
   }

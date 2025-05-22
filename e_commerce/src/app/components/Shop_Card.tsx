@@ -1,48 +1,53 @@
 import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
+import { FC } from "react";
 
-export default function Shop_Card({
-    image,
-    title,
-    discountedPrice,
-    originalPrice,
-}: {
-    image: StaticImageData;
-    title: string;
-    discountedPrice: number;
-    originalPrice: number;
-}) {
+interface ShopCardProps {
+  id: string;
+  image: string | StaticImageData;
+  title: string;
+  discountedPrice?: number;
+  originalPrice: number;
+}
+
+const ShopCard: FC<ShopCardProps> = ({
+  id,
+  image,
+  title,
+  discountedPrice,
+  originalPrice,
+}) => {
+  const displayPrice = discountedPrice ?? originalPrice;
+
   return (
     <div className="w-[270px] h-[363px] flex flex-col gap-4 group">
-        <div className="relative w-[270px] h-[280px] bg-[#F6F7FB] flex justify-center group-hover:bg-[#EBF4F3]">
-            <div className="flex flex-col justify-center">
-                <Image src={image} width={200} alt={title}></Image>
-            </div>
-            <div className="absolute top-44 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-1">
-                <div className="flex flex-col gap-3">
-                <i className="fa-solid fa-cart-shopping text-[#151875] text-xl cursor-pointer px-2"></i>
-                <i className="fa-solid fa-search text-[#151875] text-xl cursor-pointer px-2"></i>
-                <i className="fa-regular fa-heart text-[#151875] text-xl cursor-pointer px-2"></i>
-                </div>
-            </div>
+      <div className="relative w-[270px] h-[280px] bg-[#F6F7FB] flex justify-center items-center group-hover:bg-[#EBF4F3]">
+        <Image src={image} width={200} height={200} alt={title} />
+
+        <div className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Link href={`./Product_Main/${id}`}>
+            <button className="bottom-1 transform translate-y-28 bg-green-500 text-white px-2 py-1 md:px-4 md:py-1 rounded-sm text-xs md:text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-green-600 font-[Josefin Sans] h-[29px] flex items-center justify-center">
+                View Details
+            </button>
+            </Link>
         </div>
-        <div className="flex flex-col gap-2">
-            <div className="flex justify-center">
-                <p className="font-[Josefin Sans] font-normal text-[18px] leading-[18px] text-[#151875]">{title}</p>
-            </div>
-            <div className="flex justify-center">
-                <div className="flex gap-2">
-                    <span className="w-[10px] h-[10px] bg-[#DE9034] rounded-full"></span>
-                    <span className="w-[10px] h-[10px] bg-[#EC42A2] rounded-full"></span>
-                    <span className="w-[10px] h-[10px] bg-[#8568FF] rounded-full"></span>
-                </div>
-            </div>
-            <div className="flex justify-center">
-                <div className="flex gap-2">
-                    <p className="font-[Josefin Sans] font-normal text-[14px] leading-[14px] text-[#151875]">${discountedPrice}</p>
-                    <p className="font-[Josefin Sans] font-normal text-[14px] leading-[14px] text-[#FB2E86] line-through">${originalPrice}</p>
-                </div>
-            </div>
+      </div>
+
+      <div className="flex flex-col gap-2 items-center">
+        <p className="font-[Josefin Sans] text-[18px] text-[#151875]">{title}</p>
+
+        <div className="flex gap-2">
+          <span className="w-[10px] h-[10px] bg-[#DE9034] rounded-full"></span>
+          <span className="w-[10px] h-[10px] bg-[#EC42A2] rounded-full"></span>
+          <span className="w-[10px] h-[10px] bg-[#8568FF] rounded-full"></span>
         </div>
+
+        <p className="font-[Josefin Sans] text-[14px] text-[#151875]">
+          {displayPrice}PKR
+        </p>
+      </div>
     </div>
-);
-}
+  );
+};
+
+export default ShopCard;

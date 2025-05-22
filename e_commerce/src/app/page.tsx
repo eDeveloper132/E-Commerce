@@ -1,86 +1,60 @@
-// import Products_Card from './components/Products_Card';
-// import IProduct from './types/IProduct';
-// import { urlFor } from '../sanity/lib/image'; // Assuming you have this utility function to get image URL
-// import { getProducts } from './api/products/products';
-import connectToDatabase from '../../lib/mongodb';
-import { ProfileModel } from '../../schema/profile';
+// app/page.tsx
+
+// import connectToDatabase from '../../lib/mongodb';
+// import { ProfileModel } from '../../schema/profile';
 import MainHome from './Main/page';
-import { auth, currentUser } from '@clerk/nextjs/server';
-export default async function Home() {
-  await connectToDatabase();
-  const currentperson = await currentUser();
+import { auth } from '@clerk/nextjs/server';
+
+export default async function HomePage() {
+  // 1) connect to MongoDB (will return null on failure)
+  // const db = await connectToDatabase();
+
+  // 2) get Clerk’s current user & session
+  // const clerkUser = await currentUser();
   const { userId } = await auth();
-  const currentpersonidinmongoose = await ProfileModel.findOne({
-    clerk_user_id: currentperson?.id,
-  });
-  if (userId && !currentpersonidinmongoose && currentperson) {
-    await ProfileModel.create({
-      clerk_user_id: currentperson.id,
-      username: currentperson.fullName,
-      email: currentperson.emailAddresses?.[0]?.emailAddress,
-      phonenumber: currentperson.phoneNumbers?.[0]?.phoneNumber ?? "",
-      outh_provider: currentperson.externalAccounts?.[0]?.provider ?? "",
-      outh_provider_id: currentperson.externalAccounts?.[0]?.id ?? "",
-      outh_provider2: currentperson.externalAccounts?.[1]?.provider ?? "",
-      outh_provider2_id: currentperson.externalAccounts?.[1]?.id ?? "",
-      image_url: currentperson.imageUrl ?? "",
-    });
-  }
-  if (userId && currentpersonidinmongoose && currentperson) {
-    // Check and update fields that are missing (empty strings)
-    let updated = false;
 
-  if (currentpersonidinmongoose.username === "" && currentperson.fullName) {
-      currentpersonidinmongoose.username = currentperson.fullName;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.email === "" && currentperson.emailAddresses?.[0]?.emailAddress) {
-      currentpersonidinmongoose.email = currentperson.emailAddresses[0].emailAddress;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.phonenumber === "" && currentperson.phoneNumbers?.[0]?.phoneNumber) {
-      currentpersonidinmongoose.phonenumber = currentperson.phoneNumbers[0].phoneNumber;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.outh_provider === "" && currentperson.externalAccounts?.[0]?.provider) {
-      currentpersonidinmongoose.outh_provider = currentperson.externalAccounts[0].provider;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.outh_provider_id === "" && currentperson.externalAccounts?.[0]?.id) {
-      currentpersonidinmongoose.outh_provider_id = currentperson.externalAccounts[0].id;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.outh_provider2 === "" && currentperson.externalAccounts?.[1]?.provider) {
-      currentpersonidinmongoose.outh_provider2 = currentperson.externalAccounts[1].provider;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.outh_provider2_id === "" && currentperson.externalAccounts?.[1]?.id) {
-      currentpersonidinmongoose.outh_provider2_id = currentperson.externalAccounts[1].id;
-      updated = true;
-    }
-  if (currentpersonidinmongoose.image_url === "" && currentperson.imageUrl) {
-      currentpersonidinmongoose.image_url = currentperson.imageUrl;
-      updated = true;
-    }
+  // 3) if they just logged in and we have no profile, create one
+  // if (userId && clerkUser) {
+  //   const existing = await ProfileModel.findOne({ clerk_user_id: clerkUser.id });
+  //   if (!existing) {
+  //     await ProfileModel.create({
+  //       clerk_user_id: clerkUser.id,
+  //       username: clerkUser.fullName,
+  //       email: clerkUser.emailAddresses?.[0]?.emailAddress ?? '',
+  //       phonenumber: clerkUser.phoneNumbers?.[0]?.phoneNumber ?? '',
+  //       outh_provider: clerkUser.externalAccounts?.[0]?.provider ?? '',
+  //       outh_provider_id: clerkUser.externalAccounts?.[0]?.id ?? '',
+  //       outh_provider2: clerkUser.externalAccounts?.[1]?.provider ?? '',
+  //       outh_provider2_id: clerkUser.externalAccounts?.[1]?.id ?? '',
+  //       image_url: clerkUser.imageUrl ?? '',
+  //     });
+  //   } else {
+  //     // 4) otherwise patch any missing fields
+  //     let dirty = false;
+  //     const p = existing;
+  //     if (!p.username && clerkUser.fullName)            { p.username = clerkUser.fullName; dirty = true; }
+  //     if (!p.email    && clerkUser.emailAddresses?.[0]) { p.email    = clerkUser.emailAddresses[0].emailAddress; dirty = true; }
+  //     if (!p.phonenumber && clerkUser.phoneNumbers?.[0]) { p.phonenumber = clerkUser.phoneNumbers[0].phoneNumber; dirty = true; }
+  //     if (!p.outh_provider   && clerkUser.externalAccounts?.[0]) { p.outh_provider    = clerkUser.externalAccounts[0].provider; dirty = true; }
+  //     if (!p.outh_provider_id&& clerkUser.externalAccounts?.[0]) { p.outh_provider_id = clerkUser.externalAccounts[0].id;       dirty = true; }
+  //     if (!p.outh_provider2  && clerkUser.externalAccounts?.[1]) { p.outh_provider2   = clerkUser.externalAccounts[1].provider; dirty = true; }
+  //     if (!p.outh_provider2_id&& clerkUser.externalAccounts?.[1]){ p.outh_provider2_id= clerkUser.externalAccounts[1].id;       dirty = true; }
+  //     if (!p.image_url && clerkUser.imageUrl)            { p.image_url = clerkUser.imageUrl; dirty = true; }
 
-    // Save the document only if updates were made
-    if (updated) {
-      await currentpersonidinmongoose.save();
-    }
-  }
+  //     if (dirty) await p.save();
+  //   }
+  // }
 
-  return (
-    <>
-    {userId ? (
+  // 5) render either the protected MainHome or a “please log in” prompt
+  return userId ? (
     <MainHome />
-    ) : (
-      <div className="leading-relaxed px-4 sm:px-6">
-        <div className="flex flex-col justify-center items-center my-40 sm:my-60 text-center px-4">
-          <p className="text-lg sm:text-2xl font-bold text-red-500">Please login first to access.</p>
-        </div>
+  ) : (
+    <div className="leading-relaxed px-4 sm:px-6">
+      <div className="flex flex-col justify-center items-center my-40 sm:my-60 text-center">
+        <p className="text-lg sm:text-2xl font-bold text-red-500">
+          Please log in first to access.
+        </p>
       </div>
-    )
-    }
-    </>
+    </div>
   );
 }

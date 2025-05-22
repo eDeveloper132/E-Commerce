@@ -2,15 +2,7 @@
 import React from "react";
 import Featured_Card from "./Featured_Card"; // Adjust import path as needed
 import { Product } from "../../../public/types/product";
-
-// Construct Sanity image URL from _ref string
-function getSanityImageUrl(ref?: string): string {
-  if (!ref) return "";
-  const parts = ref.split("-");
-  if (parts.length < 4) return "";
-  const [, assetId, dims, fmt] = parts;
-  return `https://cdn.sanity.io/images/onmb9fp6/production/${assetId}-${dims}.${fmt}`;
-}
+import { getSanityImageUrl } from "../../../lib/sanityHelpers";
 
 interface Props {
   productsData: Product[] | null | undefined;

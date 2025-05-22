@@ -40,4 +40,36 @@ export type Product = {
       _type: 'reference';
     };
   };                         // Optional video file
+
+  // Optional extended fields
+  brand?: string;
+  model?: string;
+  color?: string;
+  dimensions?: string;
+  weight?: string;
+  warranty?: string;
+  releaseDate?: string;      // ISO date string
+  condition?: 'new' | 'refurbished' | 'used' | 'cpo';
+
+  specifications?: Array<{
+    specName: string;
+    specValue: string;
+  }>;
+
+  features?: string[];
+  
+  movementType?: 'automatic' | 'manual' | 'quartz' | 'smart';
+  strapMaterial?: string;
+  caseMaterial?: string;
+  dialColor?: string;
+  waterResistance?: string;
+  powerReserve?: string;
+  complications?: string[];
+
+  material?: string;
+  size?: string[];
+  gender?: 'unisex' | 'men' | 'women' | 'kids';
+
+  assemblyRequired?: boolean;
+  roomType?: string;
 };

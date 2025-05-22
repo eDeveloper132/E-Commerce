@@ -19,3 +19,15 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.watches {
+  background-image: url('../../public/Rolex.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.electronics {
+  background-image: url('../../public/Electronics.jpg');
+  background-size: cover;
+  background-position: center;
+}

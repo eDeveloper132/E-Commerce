@@ -1,29 +1,39 @@
-import { fetchProducts } from "../components/data_source";
+import { fetchProducts, fetchSlider } from "../components/data_source";
 import ProductGrid from "../components/Products_Grid";
+import HeroSlider from "../components/HeroSlider";
+import ProductSearch from "../components/ProductSearch";
 
 export default async function MainHome() {
   const productsData = await fetchProducts();
+  const sliderData = await fetchSlider(); // should return a single ImageGallery object
+const allImages = sliderData.flatMap(gallery => gallery.images);
+
   return (
     <main className="w-full bg-white">
-      <div className="bg-[#F2F0FF] flex flex-col md:flex-row items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10">
-        <div className="w-full md:w-1/2 lg:w-2/5 xl:w-1/3">
-          <p className="text-[#FB2E86] font-[Lato] font-bold text-sm sm:text-base md:text-lg leading-6 sm:leading-7 md:leading-8 pb-3">
-            Best Choice Is Yours....
-          </p>
-          <h1 className="font-[Josefin Sans] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight sm:leading-snug md:leading-normal lg:leading-relaxed pb-3 text-black">
-            New Things Come First Latest {new Date().getFullYear()}
-          </h1>
-          <p className="font-[Lato] font-bold text-sm sm:text-base md:text-lg leading-6 sm:leading-7 md:leading-8 text-[#8A8FB9] pb-7">
-            Welcome To Our E-Commerce Store
-          </p>
-          {/* <button
-            type="button"
-            className="bg-[#FB2E86] text-white font-[Josefin Sans] rounded-sm px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 text-sm sm:text-base md:text-lg"
-          >
-            Shop Now
-          </button> */}
+      <div className="relative h-[600px] w-full overflow-hidden">
+        <div className="relative h-full w-full">
+          {/* Pass the gallery, not an array of galleries */}
+          <HeroSlider slides={allImages} />
+        </div>
+
+        {/* Overlay content */}
+        <div className="absolute inset-0 flex flex-col md:flex-row items-center justify-center p-4 sm:p-6 md:p-8 lg:p-10 z-10">
+          <div className="w-full md:w-1/2 lg:w-2/5 xl:w-1/3 bg-white/80 p-6 rounded-md backdrop-blur-sm">
+            <p className="text-[#FB2E86] font-[Lato] font-bold text-sm sm:text-base md:text-lg pb-3">
+              Best Choice Is Yours....
+            </p>
+            <h1 className="font-[Josefin Sans] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold pb-3 text-black">
+              New Things Come First Latest {new Date().getFullYear()}
+            </h1>
+            <p className="font-[Lato] font-bold text-sm sm:text-base md:text-lg text-[#8A8FB9] pb-7">
+              Welcome To Our E-Commerce Store
+            </p>
+          </div>
         </div>
       </div>
+      {/* Product search bar */}
+      <ProductSearch products={productsData} />
+
       <ProductGrid productsData={productsData} />
     </main>
   );

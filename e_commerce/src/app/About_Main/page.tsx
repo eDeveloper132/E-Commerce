@@ -1,13 +1,13 @@
-import Image from "next/image"
-import about_us from "../../../public/about_us.jpeg"
-import about_us_1 from "../../../public/about_us_1.jpeg"
-import about_us_2 from "../../../public/about_us_2.jpeg"
-import about_us_3 from "../../../public/about_us_3.jpeg"
-import Offer_Card from "../components/Offer_Card"
-import delivery_van from "../../../public/delivery_van.png"
-import support from "../../../public/support.png"
-import award from "../../../public/award.png"
-import twentyfourseven from "../../../public/24_7.png"
+// import Image from "next/image"
+// import about_us from "../../../public/about_us.jpeg"
+// import about_us_1 from "../../../public/about_us_1.jpeg"
+// import about_us_2 from "../../../public/about_us_2.jpeg"
+// import about_us_3 from "../../../public/about_us_3.jpeg"
+// import Offer_Card from "../components/Offer_Card"
+// import delivery_van from "../../../public/delivery_van.png"
+// import support from "../../../public/support.png"
+// import award from "../../../public/award.png"
+// import twentyfourseven from "../../../public/24_7.png"
 export default function About_Main() {
     return (
         <>
@@ -18,7 +18,7 @@ export default function About_Main() {
           </div>
         </div>
       </div>
-            <div className="bg-white">
+            {/* <div className="bg-white">
             <div className="w-full bg-white">
                 <div className="flex justify-center py-36 px-4">
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-12 xl:gap-12 2xl:gap-12 items-center lg:items-start">
@@ -81,7 +81,7 @@ export default function About_Main() {
 
 
             </div>
-</div>
+</div> */}
 
         </>
     )

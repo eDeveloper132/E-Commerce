@@ -16,6 +16,7 @@
     "chart.js": "^4.4.9",
     "mongoose": "^8.15.0",
     "next": "^15.2.3",
+    "next-pwa": "^5.6.0",
     "next-sanity": "^9.8.37",
     "nodemailer": "^7.0.3",
     "react": "^19.0.0",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@sanity/client": "^6.25.0",
+    "@types/next-pwa": "^5.6.9",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",

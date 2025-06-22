@@ -1,5 +1,5 @@
-import Image from "next/image";
-import contact_us_123 from '../../../public/contact_us_123.png';
+// import Image from "next/image";
+// import contact_us_123 from '../../../public/contact_us_123.png';
 
 export default function Contact_Main() {
     return (
@@ -11,11 +11,10 @@ export default function Contact_Main() {
           </div>
         </div>
       </div>
-
+{/* 
             <div className="bg-white w-full">
                 <div className="flex justify-center w-full py-16 sm:py-24 md:py-32 px-4">
                     <div className="w-screen mx-auto flex flex-col lg:flex-row gap-12 sm:gap-16 md:gap-24">
-                        {/* Information About Us Section */}
                         <div className="w-full md:w-[550px] flex flex-col gap-6 sm:gap-8 md:gap-12 bg-white p-6 rounded-lg border border-gray-200">
                             <p className="font-[Josefin Sans] text-center lg:text-left text-[28px] sm:text-[32px] md:text-[36px] leading-[36px] sm:leading-[42px] md:leading-[48px] text-[#151875] font-semibold">
                                 Information About Us
@@ -32,7 +31,6 @@ export default function Contact_Main() {
                             </span>
                         </div>
 
-                        {/* Contact Way Section */}
                         <div className="w-full md:w-[550px] flex flex-col gap-6 sm:gap-8 md:gap-12 bg-white p-6 rounded-lg border border-gray-200">
                             <p className="font-[Josefin Sans] text-center lg:text-left text-[28px] sm:text-[32px] md:text-[36px] leading-[36px] sm:leading-[42px] md:leading-[48px] text-[#151875] font-semibold">
                                 Contact Way
@@ -173,7 +171,7 @@ export default function Contact_Main() {
                             </button>
                         </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 }

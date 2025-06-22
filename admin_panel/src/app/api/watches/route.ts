@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const corsHeaders = {
   "Content-Type": "application/json",
   // "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Origin": "https://e-commerce-umber-eight-36.vercel.app/", // Restrict in production
+  "Access-Control-Allow-Origin": "https://shopeasy-karachi.vercel.app/", // Restrict in production
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };

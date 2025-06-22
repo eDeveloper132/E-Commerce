@@ -32,45 +32,50 @@ export default function Navbar() {
       </div>
 
       {/* Main Navigation */}
-<div className="flex px-4">
-  <div className="flex my-4 w-full justify-between flex-wrap items-center relative">
-    <Link href="/">
-      <p className="font-[Josefin Sans] font-bold text-2xl sm:text-3xl md:text-4xl text-[#0D0E43] cursor-pointer">
-        ShopEasy
-      </p>
-    </Link>
-    <div className="right-0">
-      <button
-        title="Menu"
-        className="md:hidden text-[#0D0E43]"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
-        <i className="fa-solid fa-bars text-2xl"></i>
-      </button>
-      <ul
-        className={`${
-          isMenuOpen
-            ? "flex flex-col w-full absolute top-full left-0 bg-white z-10 py-4"
-            : "hidden"
-        } md:flex md:flex-row md:w-auto md:static md:py-0 gap-4 font-[Lato] font-medium`}
-      >
-        {/* Your menu items remain unchanged */}
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/"}>Home</Link></li>
-
-               {/* <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Products</li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">
-          <Link href="/Blog_web_page">Blog</Link>
-        </li> */}
-        {/* <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Shop</li> */}
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/electronics"}>Electronics</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/watches"}>Watches</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/about_us"}>About Us</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href="/contact_us">Contact Us</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/dashboard"}>Dashboard</Link></li>
-      </ul>
-    </div>
-  </div>
-</div>
+      <div className="flex px-4">
+        <div className="flex my-4 w-full justify-between flex-wrap items-center relative">
+          <Link href="/">
+            <p className="font-[Josefin Sans] font-bold text-2xl sm:text-3xl md:text-4xl text-[#0D0E43] cursor-pointer">
+              ShopEasy
+            </p>
+          </Link>
+          <div className="right-0">
+            <button
+              title="Menu"
+              className="md:hidden text-[#0D0E43]"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <i className="fa-solid fa-bars text-2xl"></i>
+            </button>
+            <ul
+              className={`${
+                isMenuOpen
+                  ? "flex flex-col w-full absolute top-full left-0 bg-white z-50 py-4"
+                  : "hidden"
+              } md:flex md:flex-row md:w-auto md:static md:py-0 gap-4 font-[Lato] font-medium`}
+            >
+              {[
+                { href: "/", label: "Home" },
+                { href: "/electronics", label: "Electronics" },
+                { href: "/watches", label: "Watches" },
+                { href: "/about_us", label: "About Us" },
+                { href: "/contact_us", label: "Contact Us" },
+                { href: "/dashboard", label: "Dashboard" },
+              ].map((item) => (
+                <li key={item.href} className="px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">
+                  <Link
+                    href={item.href}
+                    className="block w-full"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </nav>
   );
 }

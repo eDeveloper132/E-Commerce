@@ -6,6 +6,7 @@ import './globals.css';
 import Script from 'next/script';
 import ClientWrapper from './components/clientlayout';
 import Navbar from './components/NavBar';
+import React from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,6 +38,17 @@ export default function RootLayout({
         />
       </head>
       <body className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}>
+        
+        <Script
+    src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"
+    strategy="afterInteractive"
+  />
+{React.createElement('df-messenger', {
+    intent: 'WELCOME',
+    'chat-title': 'ShopEasy',
+    'agent-id': '9f757d8a-bc7b-4a93-9226-85c2755a36c1',
+    'language-code': 'en',
+  })}
         <ClientWrapper>
           <Navbar />
           {children}
@@ -107,3 +119,8 @@ export default function RootLayout({
     </html>
   );
 }
+
+// Project ID
+// shopeasy-cjdc
+// Project number:
+// 454202805853

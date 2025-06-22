@@ -61,7 +61,7 @@ export default function Featured_Card({
         <li className="w-3 h-0.5 md:w-4 md:h-1 rounded-[10px] bg-[#F701A8]"></li>
         <li className="w-3 h-0.5 md:w-4 md:h-1 rounded-[10px] group-hover:bg-[#FFEAC1] bg-[#00009D]"></li>
       </ul>
-      <p className="font-[Josefin Sans] text-sm md:text-base group-hover:text-white text-[#151875] text-center">
+      <p className="font-[Josefin Sans] text-sm md:text-base group-hover:text-white text-[#151875] text-center px-3">
         {truncatedDescription}
       </p>
       <p className="font-[Lato] font-normal text-sm md:text-base group-hover:text-white text-[#151875] text-center">

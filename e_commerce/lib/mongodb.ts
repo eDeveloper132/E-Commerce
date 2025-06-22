@@ -9,6 +9,15 @@ const uri = process.env.MONGODB_URI;
 
 const options: mongoose.ConnectOptions = {
   appName: 'devrel.template.nextjs',
+  maxPoolSize: 20,         // Maximum number of connections in the pool
+  minPoolSize: 5,          // Minimum number of connections to keep open
+  connectTimeoutMS: 10000, // 10 seconds to establish a connection
+  socketTimeoutMS: 30000,  // 30 seconds to wait for a server response
+  serverSelectionTimeoutMS: 10000, // 10 seconds to select a server
+  retryWrites: true,       // Enable retryable writes
+  retryReads: true,        // Enable retryable reads
+  // ssl: true,            // Uncomment and configure if SSL/TLS is required
+  // authMechanism: 'SCRAM-SHA-256', // Uncomment if specific auth mechanism is needed
   // …any other mongoose options
 };
 
@@ -38,6 +47,12 @@ async function connectToDatabase(): Promise<typeof mongoose | null> {
       .then((mongooseInstance) => {
         mongooseInstance.connection.on('error', (err) => {
           console.error('⚠️ Mongoose connection error:', err);
+        });
+        mongooseInstance.connection.on('disconnected', () => {
+          console.warn('⚠️ Mongoose disconnected');
+        });
+        mongooseInstance.connection.on('reconnected', () => {
+          console.log('✅ Mongoose reconnected');
         });
         console.log('✅ MongoDB connected');
         return mongooseInstance;

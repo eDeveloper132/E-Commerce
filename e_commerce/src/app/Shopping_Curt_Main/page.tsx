@@ -1,9 +1,12 @@
+// components/ShoppingCartMain.tsx
 'use client';
+
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import AddToCartModal, { ProductInfo } from '../components/AddToCartModal';
 
 type CartItem = {
+  id: string;
   name: string;
   price: number;
   quantity: number;
@@ -20,20 +23,20 @@ export default function ShoppingCartMain() {
   const [grandTotal, setGrandTotal] = useState(0);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load & migrate on first mount
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [checkoutProduct, setCheckoutProduct] = useState<ProductInfo | null>(null);
+
+  // Load & migrate cart on mount
   useEffect(() => {
     const rawNew = localStorage.getItem(STORAGE_KEY);
     const rawOld = localStorage.getItem(LEGACY_KEY);
-
     let items: CartItem[] = [];
     let updatedAt = Date.now();
 
     const tryParse = (val: string | null) => {
-      try {
-        return val ? JSON.parse(val) : null;
-      } catch {
-        return null;
-      }
+      try { return val ? JSON.parse(val) : null; }
+      catch { return null; }
     };
 
     const newParsed = tryParse(rawNew);
@@ -53,8 +56,8 @@ export default function ShoppingCartMain() {
       Array.isArray(newParsed.items) &&
       typeof newParsed.updatedAt === 'number'
     ) {
-      const isExpired = Date.now() - newParsed.updatedAt > EXPIRY_MS;
-      if (!isExpired) {
+      const expired = Date.now() - newParsed.updatedAt > EXPIRY_MS;
+      if (!expired) {
         items = newParsed.items;
         updatedAt = newParsed.updatedAt;
       } else {
@@ -62,16 +65,17 @@ export default function ShoppingCartMain() {
       }
     }
 
-    items = items.map(item => ({
-      ...item,
-      quantity: Math.min(item.quantity, item.stock),
+    // Clamp quantities to stock
+    items = items.map(i => ({
+      ...i,
+      quantity: Math.min(i.quantity, i.stock),
     }));
 
     setCart(items);
     setHydrated(true);
   }, []);
 
-  // Sync & recalc after hydration
+  // Sync grandTotal & save cart
   useEffect(() => {
     if (!hydrated) return;
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -108,21 +112,40 @@ export default function ShoppingCartMain() {
     setCart([]);
   };
 
+  const handleProceed = () => {
+    if (!cart.length) return;
+    // Build a summary product info
+    const first = cart[0];
+    setCheckoutProduct({
+      id: first.id,
+      name: `${first.name} (${cart.length} item${cart.length > 1 ? 's' : ''})`,
+      price: grandTotal,
+      image: first.imgs,
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => setShowModal(false);
+
   if (!hydrated) return null;
 
   return (
+    <>
+      <div className="h-[286px] bg-[#F6F5FF] flex flex-col justify-center">
+        <div className="flex justify-center">
+          <div className="flex flex-col justify-center text-2xl font-semibold text-black">
+            Shopping Cart
+          </div>
+        </div>
+      </div>
     <div className="max-w-4xl mx-auto p-4 my-20">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-        Shopping Cart
-      </h2>
-
       {cart.length === 0 ? (
         <p className="p-6 text-center text-gray-600">
           Your cart is empty.
         </p>
       ) : (
         <>
-          {/* Table view for md+ */}
+          {/* Desktop Table */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full table-auto border-separate border-spacing-y-4">
               <thead>
@@ -137,7 +160,6 @@ export default function ShoppingCartMain() {
               <tbody>
                 {cart.map((item, idx) => {
                   const lineTotal = item.price * item.quantity;
-                  const img = item.imgs || '/placeholder.png';
                   return (
                     <tr
                       key={idx}
@@ -151,7 +173,7 @@ export default function ShoppingCartMain() {
                           ×
                         </button>
                         <Image
-                          src={img}
+                          src={item.imgs}
                           width={80}
                           height={80}
                           alt={item.name}
@@ -168,21 +190,15 @@ export default function ShoppingCartMain() {
                         <div className="flex items-center space-x-2 text-black">
                           <button
                             onClick={() => decrement(idx)}
-                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50 cursor-pointer"
                             disabled={item.quantity <= 1}
-                          >
-                            –
-                          </button>
-                          <span className="text-gray-800">
-                            {item.quantity}
-                          </span>
+                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                          >–</button>
+                          <span className="text-gray-800">{item.quantity}</span>
                           <button
                             onClick={() => increment(idx)}
-                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50 cursor-pointer"
                             disabled={item.quantity >= item.stock}
-                          >
-                            +
-                          </button>
+                            className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                          >+</button>
                         </div>
                         <p className="text-xs text-gray-400 mt-1">
                           / {item.stock} in stock
@@ -199,51 +215,47 @@ export default function ShoppingCartMain() {
             </table>
           </div>
 
-          {/* Card view for mobile */}
+          {/* Mobile Cards */}
           <div className="md:hidden">
             {cart.map((item, idx) => {
               const lineTotal = item.price * item.quantity;
-              const img = item.imgs || '/placeholder.png';
               return (
                 <div
                   key={idx}
-                  className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col">
+                  className="bg-white shadow rounded-lg p-4 mb-4 flex flex-col"
+                >
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="font-medium text-gray-800">{item.name}</h3>
                     <button
                       onClick={() => removeItem(idx)}
                       className="text-red-500 text-lg"
-                    >
-                      ×
-                    </button>
+                    >×</button>
                   </div>
                   <div className="flex items-center mb-3">
                     <Image
-                      src={img}
+                      src={item.imgs}
                       width={60}
                       height={60}
                       alt={item.name}
                       className="rounded mr-3"
                     />
-                    <span className="text-gray-600">${item.price.toFixed(2)}</span>
+                    <span className="text-gray-600">
+                      ${item.price.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => decrement(idx)}
-                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
                         disabled={item.quantity <= 1}
-                      >
-                        –
-                      </button>
+                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                      >–</button>
                       <span className="text-gray-800">{item.quantity}</span>
                       <button
                         onClick={() => increment(idx)}
-                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
                         disabled={item.quantity >= item.stock}
-                      >
-                        +
-                      </button>
+                        className="px-3 py-1 bg-gray-100 rounded disabled:opacity-50"
+                      >+</button>
                     </div>
                     <p className="text-sm text-gray-400">
                       / {item.stock} in stock
@@ -259,6 +271,7 @@ export default function ShoppingCartMain() {
             })}
           </div>
 
+          {/* Footer Actions */}
           <div className="mt-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <button
               onClick={clearCart}
@@ -269,15 +282,21 @@ export default function ShoppingCartMain() {
             <div className="text-2xl font-bold text-gray-800">
               Grand Total: ${grandTotal.toFixed(2)}
             </div>
-            <Link
-              href="/Order_completed_page"
+            <button
+              onClick={handleProceed}
               className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
             >
               Proceed to Checkout
-            </Link>
+            </button>
           </div>
         </>
       )}
+
+      {/* Modal */}
+      {showModal && checkoutProduct && (
+        <AddToCartModal product={checkoutProduct} onClose={closeModal} />
+      )}
     </div>
+    </>
   );
 }

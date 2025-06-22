@@ -11,10 +11,10 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white text-black">
       {/* Top Bar */}
-      <div className="flex bg-[#7E33E0] h-auto w-screen items-center font-[Josefin Sans] font-bold justify-between flex-wrap px-4">
+      <div className="flex bg-[#7E33E0] h-auto w-full items-center font-[Josefin Sans] font-bold justify-between flex-wrap px-4">
         <RealTimeDate />
         <div className="flex gap-4 w-auto mt-2 md:mt-0 items-center px-4">
-          <Link href="/Shopping_curt_page">
+          <Link href="/shopping_cart">
             <i
               className="fa-solid fa-cart-shopping my-auto cursor-pointer"
               style={{ color: "white" }}
@@ -62,10 +62,11 @@ export default function Navbar() {
           <Link href="/Blog_web_page">Blog</Link>
         </li> */}
         {/* <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg">Shop</li> */}
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/Shop_grid_page"}>Electronics</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/Shop_left_page"}>Watches</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/About_us_page"}>About Us</Link></li>
-        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href="/Contact_us_page">Contact Us</Link></li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/electronics"}>Electronics</Link></li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/watches"}>Watches</Link></li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/about_us"}>About Us</Link></li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href="/contact_us">Contact Us</Link></li>
+        <li className="my-auto h-[20px] cursor-pointer px-4 py-2 md:px-0 md:py-0 text-base md:text-lg"><Link href={"/dashboard"}>Dashboard</Link></li>
       </ul>
     </div>
   </div>

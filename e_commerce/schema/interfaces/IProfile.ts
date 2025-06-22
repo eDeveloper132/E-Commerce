@@ -1,4 +1,9 @@
 import { Document } from "mongoose";
+interface Ilike_Icomment{
+    product_id: string;
+    like?: number;
+    comment?: string;
+}
 interface IProfile extends Document {
     username?: string;
     clerk_user_id: string;
@@ -9,5 +14,6 @@ interface IProfile extends Document {
     outh_provider2?: string;
     outh_provider2_id?: string;
     image_url?: string;
+    products?: Ilike_Icomment[];
 }
 export default IProfile;

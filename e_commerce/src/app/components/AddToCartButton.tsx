@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/solid'; // Need Heroicons
 
 type CartItem = {
+  id: string;
   name: string;
   price: number;
   quantity: number;
@@ -11,7 +12,7 @@ type CartItem = {
   imgs: string
 };
 
-export default function AddToCartButton({ name, price, stock, imgs }: { name: string; price: number; stock: number; imgs: string; }) {
+export default function AddToCartButton({ name, price, stock, imgs, id }: { name: string; price: number; stock: number; imgs: string; id: string; }) {
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function AddToCartButton({ name, price, stock, imgs }: { name: st
   const handleAddToCart = () => {
     if (typeof window === 'undefined') return;
 
-    const newItem: CartItem = { name, price, quantity: 1 , stock, imgs };
+    const newItem: CartItem = { name, price, quantity: 1 , stock, imgs, id };
     const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
 
     const existing = cart.find(item => item.name === name);

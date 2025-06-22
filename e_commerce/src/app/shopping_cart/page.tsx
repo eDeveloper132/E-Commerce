@@ -1,8 +1,9 @@
 import Shopping_Curt_Main from "../Shopping_Curt_Main/page";
 import { auth } from '@clerk/nextjs/server';
-
+import connect_to_db from "../../../lib/connect_to_db";
 export default async function shop_grid(){
       const { userId } = await auth();
+      await connect_to_db();
     return(
         <>
             <div className="bg-white">

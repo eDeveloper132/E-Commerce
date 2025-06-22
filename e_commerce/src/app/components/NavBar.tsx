@@ -13,14 +13,14 @@ export default function Navbar() {
       {/* Top Bar */}
       <div className="flex bg-[#7E33E0] h-auto w-full items-center font-[Josefin Sans] font-bold justify-between flex-wrap px-4">
         <RealTimeDate />
-        <div className="flex gap-4 w-auto mt-2 md:mt-0 items-center px-4">
+        <div className="flex gap-4 w-auto my-1 lg:mt-2 xl:mt-2 2xl:mt-2 md:mt-0 items-center px-4">
           <Link href="/shopping_cart">
             <i
               className="fa-solid fa-cart-shopping my-auto cursor-pointer"
               style={{ color: "white" }}
             ></i>
           </Link>
-          <div className="mt-1 text-white">
+          <div className="text-white">
             <SignedOut>
               <SignInButton />
             </SignedOut>
